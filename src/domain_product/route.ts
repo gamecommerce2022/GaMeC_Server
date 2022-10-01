@@ -1,0 +1,1 @@
+export * as ProductRoute from './route/product_route';

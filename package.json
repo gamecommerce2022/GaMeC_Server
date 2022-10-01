@@ -1,29 +1,24 @@
 {
-  "name": "game_commerce_node",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "ts-node-dev src/app.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/cors": "^2.8.12",
-    "@types/express": "^4.17.13",
-    "@types/mongoose": "^5.11.97",
-    "ts-node-dev": "^10.9.1",
-    "typescript": "^4.8.2"
-  },
-  "dependencies": {
-    "body-parser": "^1.20.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.2",
-    "express": "^4.18.1",
-    "joi": "^17.6.0",
-    "mongoose": "^6.5.4",
-    "winston": "^3.8.1",
-    "winston-daily-rotate-file": "^4.7.1"
-  }
+ "name": "game_commerce_node",
+ "version": "1.0.0",
+ "description": "",
+ "main": "src/server.ts",
+ "scripts": {
+  "start": "nodemon src/server.ts",
+  "postinstall": "tsc"
+ },
+ "author": "",
+ "license": "MIT",
+ "dependencies": {
+  "chalk": "^4.1.2",
+  "cross-env": "^7.0.3",
+  "dotenv": "^16.0.2",
+  "express": "^4.18.1",
+  "joi": "^17.6.1",
+  "mongoose": "^6.6.2"
+ },
+ "devDependencies": {
+  "@types/express": "^4.17.14",
+  "typescript": "^4.8.3"
+ }
 }
