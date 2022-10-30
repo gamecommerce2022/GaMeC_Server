@@ -1,66 +1,96 @@
-import express from 'express';
-import http from 'http';
-import mongoose from 'mongoose';
-import { config } from './config/config';
+
 import Logging from './library/logging';
-import { ProductRoute } from './domain_product/route';
-import { UserRoute } from './domain_user/route';
+import bannerLogger from './library/banner';
 
-const router = express();
+import expressLoader from './library/loader/express.loader';
+import mongooseLoader from './library/loader/mongoose.loader';
+import monitorLoader from './library/loader/monitor.loader';
+import publicLoader from './library/loader/public.loader';
+import swaggerLoader from './library/loader/swagger.loader';
+import winstonLoader from './library/loader/winston.loader';
 
-/** Connect with Mongo DB */
-mongoose.connect(config.mongo.url, { retryWrites: true, w: 'majority' })
- .then(() => {
-  Logging.info('Connect to Mongo Database');
-  startServer();
- })
- .catch((err) => {
-  Logging.error('Unable to connect Mongo Database');
-  Logging.error(err);
- });
+// const router = express();
 
-/** Only start the server if Mongo Connects */
-const startServer = () => {
- router.use((req, res, next) => {
-  /** Log the req */
-  Logging.info(`Incomming - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+// /** Connect with Mongo DB */
+// mongoose.connect(config.mongo.url, { retryWrites: true, w: 'majority' })
+//  .then(() => {
+//   Logging.info('Connect to Mongo Database');
+//   startServer();
+//  })
+//  .catch((err) => {
+//   Logging.error('Unable to connect Mongo Database');
+//   Logging.error(err);
+//  });
 
-  res.on('finish', () => {
-   /** Log the res */
-   Logging.info(`Result - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - STATUS: [${res.statusCode}]`);
-  });
+// /** Only start the server if Mongo Connects */
+// const startServer = () => {
+//  router.use((req, res, next) => {
+//   /** Log the req */
+//   Logging.info(`Incomming - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
 
-  next();
- });
+//   res.on('finish', () => {
+//    /** Log the res */
+//    Logging.info(`Result - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - STATUS: [${res.statusCode}]`);
+//   });
 
- router.use(express.urlencoded({ extended: true }));
- router.use(express.json());
+//   next();
+//  });
 
- router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+//  router.use(express.urlencoded({ extended: true }));
+//  router.use(express.json());
 
-  if (req.method == 'OPTIONS') {
-   res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-   return res.status(200).json({});
-  }
-  next();
- });
+//  router.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
- /** Routes */
- router.use('/products', ProductRoute.default);
- router.use('/users', UserRoute.default);
+//   if (req.method == 'OPTIONS') {
+//    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+//    return res.status(200).json({});
+//   }
+//   next();
+//  });
 
- /** Health Check */
- router.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong' }));
+//  /** Routes */
+//  router.use('/products', ProductRoute.default);
+//  router.use('/users', UserRoute.default);
 
- /** Error Handling */
- router.use((req, res, next) => {
-  const error = new Error('not found');
-  Logging.error(error);
+//  /** Health Check */
+//  router.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong' }));
 
-  return res.status(404).json({ message: error.message });
- });
+//  /** Error Handling */
+//  router.use((req, res, next) => {
+//   const error = new Error('not found');
+//   Logging.error(error);
 
- http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
-};
+//   return res.status(404).json({ message: error.message });
+//  });
+
+//  http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
+// };
+
+
+async function initApp() {
+ // logging
+ winstonLoader()
+
+ // Database with mongoose
+ await mongooseLoader()
+
+ // express
+ const app = expressLoader()
+
+ // monitor
+ monitorLoader(app)
+
+ // swagger
+ swaggerLoader(app)
+
+ // passport init
+
+ // public Url
+ publicLoader(app)
+}
+
+initApp()
+ .then(() => bannerLogger())
+ .catch((error) => Logging.error('Application is crashed: ' + error))

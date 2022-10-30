@@ -1,19 +1,21 @@
-import mongoose, { Document, Schema } from "mongoose";
+import { Schema, Document } from "mongoose";
 
-export interface IInfo {
- name: string;
+export interface IInfo extends Document {
+ title: string;
+ price: number;
+ descriptions: string[];
+ shortDescription: string;
+ shortImage: string;
+ total: number;
 }
 
-export interface IInfoModel extends IInfo, Document { }
-
-const InfoSchema: Schema = new Schema(
+export const InfoSchema: Schema = new Schema(
  {
-  name: { type: String, required: true }
- },
- {
-  timestamps: true,
-  versionKey: false
+  title: { type: String, required: true },
+  price: { type: Number, required: true },
+  descriptions: { type: Array<string>, required: false },
+  shortDescription: { type: String, required: false },
+  shortImage: { type: String, required: false },
+  total: { type: Number, required: true },
  }
 );
-
-export default mongoose.model<IInfoModel>('Info', InfoSchema);

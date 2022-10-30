@@ -1,24 +1,23 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { Info, Image, Brand } from "../model";
+import { Info, Image, Discount, Brand, Catergory } from "../model";
 
 export interface IProduct {
- name: String;
- idProduct: String;
- brand: Brand.IBrand;
+ brand: Brand.IBrand['_id'];
  info: Info.IInfo;
  image: Image.IImage;
-
+ category: Catergory.ICategory['_id'];
+ discount: Discount.IDiscount['_id'];
 }
 
 export interface IProductModel extends IProduct, Document { }
 
 const IProductSchema: Schema = new Schema(
  {
-  idProduct: { type: String, required: true },
-  name: { type: String, required: true },
-  info: { type: Schema.Types.Mixed, required: false },
-  brand: { type: Schema.Types.Mixed, required: false },
-  image: { type: Schema.Types.Mixed, required: false },
+  info: { type: Info.InfoSchema, required: true },
+  brand: { type: Schema.Types.ObjectId, required: true },
+  image: { type: Image.ImageSchema, required: false },
+  discount: { type: Schema.Types.ObjectId, required: false },
+  category: { type: Schema.Types.ObjectId, required: true },
  },
  {
   timestamps: true,

@@ -1,35 +1,41 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import { Info } from "../model";
+import { Catergory } from "../model";
 
-export default class InfoController {
+export default class CategoryController {
+ /** ================================================= */
  public static create = async (req: Request, res: Response, next: NextFunction) => {
-  const { name } = req.body;
+  console.log(req.body);
+  const { genre, image, description } = req.body;
 
-  const info = new Info.default(
+  const category = new Catergory.default(
    {
     _id: new mongoose.Types.ObjectId(),
-    name
+    genre,
+    image,
+    description,
    }
   );
 
   try {
-   const infoResult = await info.save();
-   return res.status(200).json({ infoResult });
+   const categoryResult = await category.save();
+   return res.status(200).json({ categoryResult });
   } catch (error) {
    return res.status(500).json({ error });
   }
 
  };
 
+ /** ================================================= */
  public static read = async (req: Request, res: Response, next: NextFunction) => {
 
-  const infoId = req.params.infoId;
+  const categoryId = req.params.categoryId;
 
   try {
-   const info = await Info.default.findById(infoId);
-   if (info) {
-    return res.status(200).json({ info });
+   const category = await Catergory.default.findById(categoryId);
+   if (category) {
+    return res.status(200).json({ category });
    } else {
     return res.status(400).json({ message: 'Not found' });
    }
@@ -39,11 +45,12 @@ export default class InfoController {
 
  };
 
+ /** ================================================= */
  public static readAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
-   const infos = await Info.default.find();
-   if (infos) {
-    return res.status(200).json({ infos });
+   const categories = await Catergory.default.find();
+   if (categories) {
+    return res.status(200).json({ categories });
    } else {
     return res.status(400).json({ message: 'Not found' });
    }
@@ -52,17 +59,18 @@ export default class InfoController {
   }
  };
 
+ /** ================================================= */
  public static update = async (req: Request, res: Response, next: NextFunction) => {
 
-  const infoId = req.params.infoId;
+  const categoryId = req.params.categoryId;
 
   try {
-   const info = await Info.default.findById(infoId);
-   if (info) {
-    info.set(req.body);
+   const category = await Catergory.default.findById(categoryId);
+   if (category) {
+    category.set(req.body);
     try {
-     await info.save();
-     return res.status(200).json({ info });
+     await category.save();
+     return res.status(200).json({ category });
     } catch (error) {
      return res.status(501).json({ error });
     }
@@ -76,12 +84,13 @@ export default class InfoController {
 
  };
 
+ /** ================================================= */
  public static delete = async (req: Request, res: Response, next: NextFunction) => {
-  const infoId = req.params.infoId;
+  const categoryId = req.params.categoryId;
 
   try {
-   const info = await Info.default.findByIdAndDelete(infoId);
-   if (info) {
+   const category = await Catergory.default.findByIdAndDelete(categoryId);
+   if (category) {
     return res.status(200).json({ message: 'Delete Success' });
    } else {
     return res.status(400).json({ message: 'Not found' });

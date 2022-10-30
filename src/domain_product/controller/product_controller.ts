@@ -1,35 +1,42 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import { Image } from "../model";
+import { Product } from "../model";
 
-export default class ImageController {
+export default class ProductController {
+ /** ================================================= */
  public static create = async (req: Request, res: Response, next: NextFunction) => {
-  const { images, videos } = req.body;
+  const { info, category, brand, image, discount } = req.body;
 
-  const image = new Image.default(
+  const product = new Product.default(
    {
     _id: new mongoose.Types.ObjectId(),
-    images, videos
+    info,
+    brand,
+    category,
+    image,
+    discount
    }
   );
 
   try {
-   const imageResult = await image.save();
-   return res.status(200).json({ imageResult });
+   const productResult = await product.save();
+   return res.status(200).json({ productResult });
   } catch (error) {
    return res.status(500).json({ error });
   }
 
  };
 
+ /** ================================================= */
  public static read = async (req: Request, res: Response, next: NextFunction) => {
 
-  const imageId = req.params.imageId;
+  const productId = req.params.productId;
 
   try {
-   const image = await Image.default.findById(imageId);
-   if (image) {
-    return res.status(200).json({ image });
+   const product = await Product.default.findById(productId);
+   if (product) {
+    return res.status(200).json({ product });
    } else {
     return res.status(400).json({ message: 'Not found' });
    }
@@ -39,11 +46,12 @@ export default class ImageController {
 
  };
 
+ /** ================================================= */
  public static readAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
-   const images = await Image.default.find();
-   if (images) {
-    return res.status(200).json({ images });
+   const products = await Product.default.find();
+   if (products) {
+    return res.status(200).json({ products });
    } else {
     return res.status(400).json({ message: 'Not found' });
    }
@@ -52,17 +60,18 @@ export default class ImageController {
   }
  };
 
+ /** ================================================= */
  public static update = async (req: Request, res: Response, next: NextFunction) => {
 
-  const imageId = req.params.imageId;
+  const productId = req.params.productId;
 
   try {
-   const image = await Image.default.findById(imageId);
-   if (image) {
-    image.set(req.body);
+   const product = await Product.default.findById(productId);
+   if (product) {
+    product.set(req.body);
     try {
-     await image.save();
-     return res.status(200).json({ image });
+     await product.save();
+     return res.status(200).json({ product });
     } catch (error) {
      return res.status(501).json({ error });
     }
@@ -76,12 +85,13 @@ export default class ImageController {
 
  };
 
+ /** ================================================= */
  public static delete = async (req: Request, res: Response, next: NextFunction) => {
-  const imageId = req.params.imageId;
+  const productId = req.params.productId;
 
   try {
-   const image = await Image.default.findByIdAndDelete(imageId);
-   if (image) {
+   const product = await Product.default.findByIdAndDelete(productId);
+   if (product) {
     return res.status(200).json({ message: 'Delete Success' });
    } else {
     return res.status(400).json({ message: 'Not found' });
