@@ -1,22 +1,23 @@
 import express from 'express';
-import { Info, Image } from '../controller';
+import { Product } from '../controller';
 import { Schemas } from '../middleware';
 import { ValidateJoi } from '../../middleware/Joi';
 
 const router = express.Router();
 
-/** Info */
-router.post('/createInfo', ValidateJoi(Schemas.info.create), Info.default.create);
-router.get('/getInfo/:infoId', Info.default.read);
-router.get('/getInfo/', Info.default.readAll);
-router.patch('/updateInfo/:infoId', ValidateJoi(Schemas.info.create), Info.default.update);
-router.delete('/deleteInfo/:infoId', Info.default.delete);
+/** Product */
+const productPrefix = "/v1/product";
+/** Create Product */
+router.post(`${productPrefix}/create`, ValidateJoi(Schemas.product.create), Product.default.create);
 
-/** Image */
-router.post('/createImages', ValidateJoi(Schemas.image.create), Image.default.create);
-router.get('/getImages/:imageId', Image.default.read);
-router.get('/getImages/', Image.default.readAll);
-router.patch('/updateImages/:imageId', ValidateJoi(Schemas.image.create), Image.default.update);
-router.delete('/deleteImages/:imageId', Image.default.delete);
+/** Read Product */
+router.get(`${productPrefix}/get/:productId`, Product.default.read);
+router.get(`${productPrefix}/get/`, Product.default.readAll);
+
+/** Update Product */
+router.patch(`${productPrefix}/update/:productId`, ValidateJoi(Schemas.product.update), Product.default.update);
+
+/** Delete Product */
+router.delete(`${productPrefix}/delete/:productId`, Product.default.delete);
 
 export default router;
