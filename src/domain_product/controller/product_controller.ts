@@ -6,16 +6,38 @@ import { Product } from "../model";
 export default class ProductController {
  /** ================================================= */
  public static create = async (req: Request, res: Response, next: NextFunction) => {
-  const { info, category, brand, image, discount } = req.body;
+  const { short_image,
+   price_after,
+   price_before,
+   image_list,
+   title,
+   type,
+   max_player,
+   release_date,
+   language,
+   addition_info,
+   description,
+   addtion_images,
+   videos,
+   platform, } = req.body;
 
   const product = new Product.default(
    {
     _id: new mongoose.Types.ObjectId(),
-    info,
-    brand,
-    category,
-    image,
-    discount
+    short_image,
+    price_after,
+    price_before,
+    image_list,
+    title,
+    type,
+    max_player,
+    release_date,
+    language,
+    addition_info,
+    description,
+    addtion_images,
+    videos,
+    platform,
    }
   );
 
