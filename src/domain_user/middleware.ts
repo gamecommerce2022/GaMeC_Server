@@ -1,1 +1,1 @@
-export * from './middleware/schema';
+export * from './middleware/schema'

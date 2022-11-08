@@ -1,5 +1,5 @@
-import Joi from "joi";
-import { Product, Brand, Catergory, Discount, Info, Image } from "../model";
+import Joi from 'joi'
+import { Product, Brand, Catergory, Discount, Info, Image } from '../model'
 
 export const Schemas = {
     product: {
@@ -24,7 +24,7 @@ export const Schemas = {
             comment: Joi.object({
                 name: Joi.string().required(),
                 content: Joi.string().required(),
-                date: Joi.string().required()
+                date: Joi.string().required(),
             }),
         }),
         update: Joi.object<Product.IProduct>({
@@ -48,7 +48,7 @@ export const Schemas = {
             comment: Joi.object({
                 name: Joi.string().required(),
                 content: Joi.string().required(),
-                date: Joi.string().required()
+                date: Joi.string().required(),
             }),
         }),
     },
@@ -93,5 +93,5 @@ export const Schemas = {
             description: Joi.string().allow(''),
             image: Joi.string().allow(''),
         }),
-    }
-};
+    },
+}

@@ -1,20 +1,20 @@
 {
- "compilerOptions": {
-  "target": "es2016",
-  "module": "commonjs",
-  "outDir": "./build",
-  "resolveJsonModule": true,
-  "esModuleInterop": true,
-  "forceConsistentCasingInFileNames": true,
-  "strict": true,
-  "skipLibCheck": true,
-  "baseUrl": "src",
-  "paths": {
-   "@app/*": ["*"],
-   "@config/*": ["config/*"],
-   "@product/*": ["domain_product/*"],
-   "@library/*": ["library/*"]
-  }
- },
- "include": ["src/**/**/*"]
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonjs",
+        "outDir": "./build",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "baseUrl": "src",
+        "paths": {
+            "@app/*": ["*"],
+            "@config/*": ["config/*"],
+            "@product/*": ["domain_product/*"],
+            "@library/*": ["library/*"]
+        }
+    },
+    "include": ["src/**/**/*"]
 }

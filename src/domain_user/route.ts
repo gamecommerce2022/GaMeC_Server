@@ -1,1 +1,1 @@
-export * as UserRoute from './route/user_route';
+export * as UserRoute from './route/user_route'

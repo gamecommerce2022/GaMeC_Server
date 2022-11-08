@@ -1,13 +1,12 @@
+import Logging from './library/logging'
+import bannerLogger from './library/banner'
 
-import Logging from './library/logging';
-import bannerLogger from './library/banner';
-
-import expressLoader from './library/loader/express.loader';
-import mongooseLoader from './library/loader/mongoose.loader';
-import monitorLoader from './library/loader/monitor.loader';
-import publicLoader from './library/loader/public.loader';
-import swaggerLoader from './library/loader/swagger.loader';
-import winstonLoader from './library/loader/winston.loader';
+import expressLoader from './library/loader/express.loader'
+import mongooseLoader from './library/loader/mongoose.loader'
+import monitorLoader from './library/loader/monitor.loader'
+import publicLoader from './library/loader/public.loader'
+import swaggerLoader from './library/loader/swagger.loader'
+import winstonLoader from './library/loader/winston.loader'
 
 // const router = express();
 
@@ -68,29 +67,28 @@ import winstonLoader from './library/loader/winston.loader';
 //  http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
 // };
 
-
 async function initApp() {
- // logging
- winstonLoader()
+    // logging
+    winstonLoader()
 
- // Database with mongoose
- await mongooseLoader()
+    // Database with mongoose
+    await mongooseLoader()
 
- // express
- const app = expressLoader()
+    // express
+    const app = expressLoader()
 
- // monitor
- monitorLoader(app)
+    // monitor
+    monitorLoader(app)
 
- // swagger
- swaggerLoader(app)
+    // swagger
+    swaggerLoader(app)
 
- // passport init
+    // passport init
 
- // public Url
- publicLoader(app)
+    // public Url
+    publicLoader(app)
 }
 
 initApp()
- .then(() => bannerLogger())
- .catch((error) => Logging.error('Application is crashed: ' + error))
+    .then(() => bannerLogger())
+    .catch((error) => Logging.error('Application is crashed: ' + error))

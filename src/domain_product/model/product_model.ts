@@ -1,31 +1,31 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IProduct {
-    short_image: string;
-    price_after: string;
-    price_before: string;
-    image_list: string[];
-    title: string;
-    type: string;
-    max_player: string;
-    release_date: string;
-    language: string;
-    addition_info: string;
-    description: string[];
-    addtion_images: string[];
-    videos: string[];
-    platform: string;
-    rate: number;
+    short_image: string
+    price_after: string
+    price_before: string
+    image_list: string[]
+    title: string
+    type: string
+    max_player: string
+    release_date: string
+    language: string
+    addition_info: string
+    description: string[]
+    addtion_images: string[]
+    videos: string[]
+    platform: string
+    rate: number
     comment: {
-        name: string;
-        content: string;
-        date: string;
-    }[];
-    like: number;
-    dislike: number;
+        name: string
+        content: string
+        date: string
+    }[]
+    like: number
+    dislike: number
 }
 
-export interface IProductModel extends IProduct, Document { }
+export interface IProductModel extends IProduct, Document {}
 
 const IProductSchema: Schema = new Schema(
     {
@@ -48,16 +48,16 @@ const IProductSchema: Schema = new Schema(
             {
                 name: { type: String, required: true },
                 content: { type: String, required: true },
-                date: { type: String, required: true }
-            }
+                date: { type: String, required: true },
+            },
         ],
         like: { type: Number, required: false },
         dislike: { type: Number, required: false },
     },
     {
         timestamps: true,
-        versionKey: false
+        versionKey: false,
     }
-);
+)
 
-export default mongoose.model<IProductModel>('Product', IProductSchema);
+export default mongoose.model<IProductModel>('Product', IProductSchema)
