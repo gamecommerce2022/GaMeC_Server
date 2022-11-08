@@ -2,6 +2,7 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { Product } from "../model";
+import { IProduct } from "../model/product_model";
 
 export default class ProductController {
     /** ================================================= */
@@ -94,16 +95,24 @@ export default class ProductController {
     /** ================================================= */
     public static readByPage = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let page:string = req.query.p as string;        
-            let limit:string = req.query.limit as string;
-            if(limit === '')
-            {
+            let page: string = req.query.p as string;
+            let limit: string = req.query.limit as string;
+            let platform: string = req.query.platform as string;
+            console.log(`${page} - ${limit} - ${platform}`)
+            if (limit === undefined) {
                 limit = '30';
             }
-            if(page === ''){
-                page = '1';
+            if (page === undefined) {
+                page = '0';
             }
-            const products = await Product.default.find().skip(parseInt(page) * parseInt(limit)).limit(parseInt(limit));
+            let products: IProduct[] = [];
+            if (platform === undefined) {
+                platform = 'all';
+                products = await Product.default.find({}, { "title": 1, "price_before": 1, "price_after": 1, "platform": 1, "short_image": 1 }).skip(parseInt(page) * parseInt(limit)).limit(parseInt(limit))
+            }
+            else {
+                products = await Product.default.find({}, { "title": 1, "price_before": 1, "price_after": 1, "platform": 1, "short_image": 1 }, { "platform": platform }).skip(parseInt(page) * parseInt(limit)).limit(parseInt(limit))
+            }
             if (products) {
                 return res.status(200).json({ products });
             } else {
@@ -113,6 +122,21 @@ export default class ProductController {
             return res.status(500).json({ error });
         }
     };
+
+    /** ================================================= */
+    public static readPageNumber = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const length = await Product.default.count();
+            if (length) {
+                return res.status(200).json({ length });
+            } else {
+                return res.status(400).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ error });
+        }
+    };
+
 
     /** ================================================= */
     public static update = async (req: Request, res: Response, next: NextFunction) => {
