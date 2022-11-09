@@ -91,41 +91,39 @@ export default class ProductController {
     /** ================================================= */
     public static readByPage = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let page: string = req.query.p as string
-            let limit: string = req.query.limit as string
-            let platform: string = req.query.platform as string
-            console.log(`${page} - ${limit} - ${platform}`)
-            if (limit === undefined) {
-                limit = '30'
+            let strPage = req.query.page;
+            let page = 0;
+            if(strPage !== undefined){
+                page = parseInt(strPage as string);
             }
-            if (page === undefined) {
-                page = '0'
+            let strPerPage = req.query.perPage;
+            let perPage = 30;
+            if(strPerPage !== undefined){
+                perPage = parseInt(strPerPage as string);
             }
-            let products: IProduct[] = []
-            if (platform === undefined) {
-                platform = 'all'
-                products = await Product.default
-                    .find({}, { title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1 })
-                    .skip(parseInt(page) * parseInt(limit))
-                    .limit(parseInt(limit))
-            } else {
-                products = await Product.default
-                    .find(
-                        {},
-                        { title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1 },
-                        { platform: platform }
-                    )
-                    .skip(parseInt(page) * parseInt(limit))
-                    .limit(parseInt(limit))
+
+            let strSort = req.query.sort;
+            let strOrder = req.query.order;
+            let sort = {};
+            if(strSort !== undefined && strOrder !== undefined){
+                if((strOrder as string).includes("ASC")){
+                    sort = {[strSort as string]: 1};
+                } else {
+                    sort = {[strSort as string]: -1}; 
+                }
             }
+        
+            let products = await Product.default.find(
+                {}, { title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1 }
+            ).sort(sort).skip(page * perPage).limit(perPage);
             if (products) {
-                return res.status(200).json({ products })
+                return res.status(200).json(products);
             } else {
                 return res.status(400).json({ message: 'Not found' })
             }
         } catch (error) {
             return res.status(500).json({ error })
-        }
+        }       
     }
 
     /** ================================================= */
