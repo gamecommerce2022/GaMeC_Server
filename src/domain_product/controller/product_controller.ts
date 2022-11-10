@@ -93,28 +93,37 @@ export default class ProductController {
         try {
             let strPage = req.query.page;
             let page = 0;
-            if(strPage !== undefined){
+            if (strPage !== undefined) {
                 page = parseInt(strPage as string);
             }
             let strPerPage = req.query.perPage;
             let perPage = 30;
-            if(strPerPage !== undefined){
+            if (strPerPage !== undefined) {
                 perPage = parseInt(strPerPage as string);
             }
 
             let strSort = req.query.sort;
             let strOrder = req.query.order;
             let sort = {};
-            if(strSort !== undefined && strOrder !== undefined){
-                if((strOrder as string).includes("ASC")){
-                    sort = {[strSort as string]: 1};
+            if (strSort !== undefined && strOrder !== undefined) {
+                if ((strOrder as string).includes("ASC")) {
+                    sort = { [strSort as string]: 1 };
                 } else {
-                    sort = {[strSort as string]: -1}; 
+                    sort = { [strSort as string]: -1 };
                 }
             }
-        
+
+            let queryText = req.query.q;
+            let query = { };
+            if(queryText !== undefined){
+                query = {"title" :  {$regex : `${queryText}`}};
+                console.log(query);
+            }                        
             let products = await Product.default.find(
-                {}, { title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1 }
+                query, {
+                    _id: 0,
+                    title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1
+                }
             ).sort(sort).skip(page * perPage).limit(perPage);
             if (products) {
                 return res.status(200).json(products);
@@ -123,13 +132,19 @@ export default class ProductController {
             }
         } catch (error) {
             return res.status(500).json({ error })
-        }       
+        }
     }
 
     /** ================================================= */
     public static readPageNumber = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const length = await Product.default.count()
+            let queryText = req.query.q;
+            let query = { };
+            if(queryText !== undefined){
+                query = {"title" :  {$regex : `${queryText}`}};
+                console.log(query);
+            }  
+            const length = await Product.default.find(query).count()
             if (length) {
                 return res.status(200).json({ length })
             } else {
