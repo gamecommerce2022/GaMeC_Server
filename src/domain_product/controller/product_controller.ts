@@ -121,7 +121,7 @@ export default class ProductController {
             }                        
             let products = await Product.default.find(
                 query, {
-                    _id: 0,
+                    _id: 1,
                     title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1
                 }
             ).sort(sort).skip(page * perPage).limit(perPage);
