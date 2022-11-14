@@ -1,14 +1,18 @@
 import { NextFunction, Request, Response } from 'express'
-import { User } from '@app/domain_user/model'
+import { User } from '../../domain_user/model'
 import * as bcrypt from 'bcrypt'
 export default class AuthController {
     public static register = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const userWithRequestedEmail = await User.default.findOne({ email: req.body.email })
+            if (userWithRequestedEmail) {
+                res.status(409).json('Email existed')
+                return;
+            }
             const salt = await bcrypt.genSalt(10)
             const hashed = await bcrypt.hash(req.body.password, salt)
             //Create new user
             const newUser = new User.default({
-                name: req.body.name,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 displayName: req.body.displayName,
@@ -17,6 +21,24 @@ export default class AuthController {
             })
             const user = await newUser.save()
             res.status(200).json(user)
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    }
+
+    public static login = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const user = await User.default.findOne({ email: req.body.email })
+            if (!user) {
+                res.status(404).json('Wrong username!')
+            }
+            const validPassword = await bcrypt.compare(req.body.password, user?.password ?? '')
+            if (!validPassword) {
+                res.status(404).json('Wrong password')
+            }
+            if (user && validPassword) {
+                res.status(200).json(user)
+            }
         } catch (error) {
             res.status(500).json(error)
         }

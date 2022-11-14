@@ -5,7 +5,6 @@ import { User } from '../controller'
 export const Schemas = {
     user: {
         create: Joi.object<User.default>({
-            name: Joi.string().required(),
             displayName: Joi.string().required(),
             firstName: Joi.string().required(),
             lastName: Joi.string().required(),
@@ -14,7 +13,6 @@ export const Schemas = {
             admin: Joi.bool().default(false),
         }),
         update: Joi.object<User.default>({
-            name: Joi.string().required(),
             displayName: Joi.string().required(),
             firstName: Joi.string().required(),
             lastName: Joi.string().required(),
