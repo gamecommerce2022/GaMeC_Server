@@ -1,13 +1,26 @@
 import Joi from 'joi'
-import { User } from '../model'
+import { User } from '../controller'
+
 
 export const Schemas = {
     user: {
-        create: Joi.object<User.IUser>({
+        create: Joi.object<User.default>({
             name: Joi.string().required(),
+            displayName: Joi.string().required(),
+            firstName: Joi.string().required(),
+            lastName: Joi.string().required(),
+            email: Joi.string().email(),
+            password: Joi.string().required(),
+            admin: Joi.bool().default(false),
         }),
-        update: Joi.object<User.IUser>({
+        update: Joi.object<User.default>({
             name: Joi.string().required(),
+            displayName: Joi.string().required(),
+            firstName: Joi.string().required(),
+            lastName: Joi.string().required(),
+            email: Joi.string().email(),
+            password: Joi.string().required(),
+            admin: Joi.bool().default(false),
         }),
     },
 }
