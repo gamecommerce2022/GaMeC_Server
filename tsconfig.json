@@ -8,13 +8,6 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "skipLibCheck": true,
-        "baseUrl": "src",
-        "paths": {
-            "@app/*": ["*"],
-            "@config/*": ["config/*"],
-            "@product/*": ["domain_product/*"],
-            "@library/*": ["library/*"]
-        }
     },
     "include": ["src/**/**/*"]
 }

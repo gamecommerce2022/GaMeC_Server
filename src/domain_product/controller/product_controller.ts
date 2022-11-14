@@ -65,7 +65,7 @@ export default class ProductController {
         try {
             const product = await Product.default.findById(productId)
             if (product) {
-                return res.status(200).json({ product })
+                return res.status(200).json(product)
             } else {
                 return res.status(400).json({ message: 'Not found' })
             }
