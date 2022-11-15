@@ -1,13 +1,15 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { User } from '../../domain_user/model'
 import * as bcrypt from 'bcrypt'
+
+import { LoginStatusCode, SignUpStatusCode } from '../utils/auth_status_code'
+import { AuthenticationUtil } from '../utils/email_verification_util'
 export default class AuthController {
-    public static register = async (req: Request, res: Response, next: NextFunction) => {
+    public static register = async (req: Request, res: Response) => {
         try {
             const userWithRequestedEmail = await User.default.findOne({ email: req.body.email })
             if (userWithRequestedEmail) {
-                res.status(409).json('Email existed')
-                return;
+                return res.status(SignUpStatusCode.EMAIL_EXISTED).json('Email existed')
             }
             const salt = await bcrypt.genSalt(10)
             const hashed = await bcrypt.hash(req.body.password, salt)
@@ -20,27 +22,33 @@ export default class AuthController {
                 password: hashed,
             })
             const user = await newUser.save()
-            res.status(200).json(user)
+            AuthenticationUtil.sendVerificationEmail("thinhnd@unicloud.com.vn")
+            return res.status(SignUpStatusCode.SUCCESS).json(user)
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(SignUpStatusCode.INTERNAL_SERVER_ERROR).json(error)
         }
     }
 
-    public static login = async (req: Request, res: Response, next: NextFunction) => {
+    public static login = async (req: Request, res: Response) => {
         try {
             const user = await User.default.findOne({ email: req.body.email })
+            if (user?.status != 'Active') {
+                return res
+                    .status(LoginStatusCode.EMAIL_INACTIVE)
+                    .json({ message: 'Pending account. Please verify your email!,' })
+            }
             if (!user) {
-                res.status(404).json('Wrong username!')
+                return res.status(LoginStatusCode.UNAUTHORIZED).json('Wrong username!')
             }
             const validPassword = await bcrypt.compare(req.body.password, user?.password ?? '')
             if (!validPassword) {
-                res.status(404).json('Wrong password')
+                return res.status(LoginStatusCode.UNAUTHORIZED).json('Wrong password')
             }
             if (user && validPassword) {
-                res.status(200).json(user)
+                return res.status(LoginStatusCode.SUCCESS).json(user)
             }
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(LoginStatusCode.INTERNAL_SERVER_ERROR).json(error)
         }
     }
 }

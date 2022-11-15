@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 export interface IUser {
     firstName: string
@@ -6,9 +6,10 @@ export interface IUser {
     displayName: string
     email: string
     password: string
+    status: string
+    confirmationCode: string
     admin: boolean
 }
-
 
 const UserSchema: Schema = new Schema(
     {
@@ -17,6 +18,12 @@ const UserSchema: Schema = new Schema(
         displayName: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
+        status: {
+            type: String,
+            enum: ['Pending', 'Active'],
+            default: 'Pending',
+        },
+        confirmationCode: { type: String, unique: true },
         admin: { type: Boolean, default: false },
     },
     {
