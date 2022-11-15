@@ -8,53 +8,57 @@ export default class ProductController {
     /** ================================================= */
     public static create = async (req: Request, res: Response, next: NextFunction) => {
         const {
-            short_image,
-            price_after,
-            price_before,
-            image_list,
             title,
             type,
-            max_player,
-            release_date,
-            language,
-            addition_info,
-            description,
-            addtion_images,
-            videos,
+            releaseDate,
             platform,
+            maxPlayer,
+            total,
+            status,
+            priceDefault,
+            priceOffical,
+            shortDescription,
+            discount,
+            note,
+            tags,
+            imageList,
+            description,
+            videoList,
             rate,
+            comment,
             like,
             dislike,
-            comment,
         } = req.body
 
         const product = new Product.default({
             _id: new mongoose.Types.ObjectId(),
-            short_image,
-            price_after,
-            price_before,
-            image_list,
             title,
             type,
-            max_player,
-            release_date,
-            language,
-            addition_info,
-            description,
-            addtion_images,
-            videos,
+            releaseDate,
             platform,
+            maxPlayer,
+            total,
+            status,
+            priceDefault,
+            priceOffical,
+            shortDescription,
+            discount,
+            note,
+            tags,
+            imageList,
+            description,
+            videoList,
             rate,
+            comment,
             like,
             dislike,
-            comment,
         })
 
         try {
-            const productResult = await product.save()
-            return res.status(200).json({ productResult })
+            await product.save()
+            return res.status(200).json({code: 200, message: 'Create Product Success'})
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({ code: 500,message: error })
         }
     }
 
@@ -65,7 +69,7 @@ export default class ProductController {
         try {
             const product = await Product.default.findById(productId)
             if (product) {
-                return res.status(200).json(product)
+                return res.status(200).json({code: 200,product})
             } else {
                 return res.status(400).json({ message: 'Not found' })
             }
@@ -79,12 +83,12 @@ export default class ProductController {
         try {
             const products = await Product.default.find()
             if (products) {
-                return res.status(200).json({ products })
+                return res.status(200).json({ code: 200,products })
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({ code: 400,message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({code: 500, message: error })
         }
     }
 
@@ -122,16 +126,16 @@ export default class ProductController {
             let products = await Product.default.find(
                 query, {
                     _id: 1,
-                    title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1
+                    title: 1, priceDefault: 1, priceOffical: 1, platform: 1, imageList: 1
                 }
             ).sort(sort).skip(page * perPage).limit(perPage);
             if (products) {
-                return res.status(200).json(products);
+                return res.status(200).json({code: 200, products});
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({code: 400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({code:500, error })
         }
     }
 
@@ -146,12 +150,12 @@ export default class ProductController {
             }  
             const length = await Product.default.find(query).count()
             if (length) {
-                return res.status(200).json({ length })
+                return res.status(200).json({code:200, length })
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({code:400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({code:500, error })
         }
     }
 
@@ -165,15 +169,15 @@ export default class ProductController {
                 product.set(req.body)
                 try {
                     await product.save()
-                    return res.status(200).json({ product })
+                    return res.status(200).json({ code: 200, message: 'Update Product Success' })
                 } catch (error) {
-                    return res.status(501).json({ error })
+                    return res.status(501).json({ code: 501, message: error })
                 }
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({ code: 400 ,message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({code: 500, message: error })
         }
     }
 
@@ -184,12 +188,12 @@ export default class ProductController {
         try {
             const product = await Product.default.findByIdAndDelete(productId)
             if (product) {
-                return res.status(200).json({ message: 'Delete Success' })
+                return res.status(200).json({code:200, message: 'Delete Success' })
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({code:400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({code:500, message: error })
         }
     }
 }
