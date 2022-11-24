@@ -6,7 +6,7 @@ export interface IUser {
     displayName: string
     email: string
     password: string
-    status: string
+    isVerified: boolean
     confirmationCode: string
     admin: boolean
 }
@@ -18,10 +18,9 @@ const UserSchema: Schema = new Schema(
         displayName: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
-        status: {
-            type: String,
-            enum: ['Pending', 'Active'],
-            default: 'Pending',
+        isVerified: {
+            type: Boolean,
+            default: false,
         },
         confirmationCode: { type: String, unique: true },
         admin: { type: Boolean, default: false },
