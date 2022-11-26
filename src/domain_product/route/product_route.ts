@@ -19,7 +19,7 @@ router.get(`${productPrefix}`, Product.default.readByPage)
 router.get(`${productPrefix}/length`, Product.default.readPageNumber)
 
 /** Update Product */
-router.put(`${productPrefix}/:productId`, ValidateJoi(Schemas.product.update), Product.default.update)
+router.put(`${productPrefix}/:productId`, Product.default.update)
 
 /** Delete Product */
 router.delete(`${productPrefix}/:productId`, Product.default.delete)

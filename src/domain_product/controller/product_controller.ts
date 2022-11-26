@@ -25,13 +25,18 @@ export default class ProductController {
             total,
             status,
             priceDefault,
-            priceDeposit,
-            discount,
             priceOffical,
             shortDescription,
-            imageList,
+            discount,
             note,
+            tags,
+            imageList,
             description,
+            videoList,
+            rate,
+            comment,
+            like,
+            dislike,
         } = req.body
 
         const product = new Product.default({
@@ -44,13 +49,18 @@ export default class ProductController {
             total,
             status,
             priceDefault,
-            priceDeposit,
-            discount,
             priceOffical,
             shortDescription,
-            imageList,
+            discount,
             note,
+            tags,
+            imageList,
             description,
+            videoList,
+            rate,
+            comment,
+            like,
+            dislike,
         })
 
         try {
@@ -72,6 +82,7 @@ export default class ProductController {
             Key: `${uuid()}.${fileType}`,
             Body: req.file!.buffer,
         }
+
         s3.upload(params, async (error: Error, data: ManagedUpload.SendData) => {
             if (error) {
                 return res.status(500).json({ code: 500, message: error })
@@ -97,7 +108,7 @@ export default class ProductController {
         try {
             const product = await Product.default.findById(productId)
             if (product) {
-                return res.status(200).json({ code: 200, message: 'Success', product })
+                return res.status(200).json({ code: 200, product })
             } else {
                 return res.status(400).json({ message: 'Not found' })
             }
@@ -111,12 +122,12 @@ export default class ProductController {
         try {
             const products = await Product.default.find()
             if (products) {
-                return res.status(200).json({ code: 200, message: 'Success', products })
+                return res.status(200).json({ code: 200, products })
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({ code: 400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({ code: 500, message: error })
         }
     }
 
@@ -154,22 +165,16 @@ export default class ProductController {
             const products = await Product.default
                 .find(query, {
                     _id: 1,
-                    title: 1,
-                    priceDefault: 1,
-                    priceOffical: 1,
-                    platform: 1,
-                    imageList: 1,
-                })
-                .sort(sort)
-                .skip(page * perPage)
-                .limit(perPage)
+                    title: 1, priceDefault: 1, priceOffical: 1, platform: 1, imageList: 1
+                }
+                ).sort(sort).skip(page * perPage).limit(perPage);
             if (products) {
-                return res.status(200).json(products)
+                return res.status(200).json({ code: 200, products });
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({ code: 400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({ code: 500, error })
         }
     }
 
@@ -184,12 +189,12 @@ export default class ProductController {
             }
             const length = await Product.default.find(query).count()
             if (length) {
-                return res.status(200).json({ length })
+                return res.status(200).json({ code: 200, length })
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({ code: 400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({ code: 500, error })
         }
     }
 
@@ -203,15 +208,15 @@ export default class ProductController {
                 product.set(req.body)
                 try {
                     await product.save()
-                    return res.status(200).json({ product })
+                    return res.status(200).json({ code: 200, message: 'Update Product Success' })
                 } catch (error) {
-                    return res.status(501).json({ error })
+                    return res.status(501).json({ code: 501, message: error })
                 }
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({ code: 400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({ code: 500, message: error })
         }
     }
 
@@ -222,12 +227,12 @@ export default class ProductController {
         try {
             const product = await Product.default.findByIdAndDelete(productId)
             if (product) {
-                return res.status(200).json({ message: 'Delete Success' })
+                return res.status(200).json({ code: 200, message: 'Delete Success' })
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({ code: 400, message: 'Not found' })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({ code: 500, message: error })
         }
     }
 }
