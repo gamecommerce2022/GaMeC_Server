@@ -1,61 +1,93 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
+import AWS from 'aws-sdk'
 import { Product } from '../model'
-import { IProduct } from '../model/product_model'
+import env from '../../library/configs/env'
+import { ManagedUpload } from 'aws-sdk/clients/s3'
+import { v4 as uuid } from 'uuid'
+
+const s3 = new AWS.S3({
+    accessKeyId: env.aws.idKey,
+    secretAccessKey: env.aws.secretKey,
+})
 
 export default class ProductController {
     /** ================================================= */
     public static create = async (req: Request, res: Response, next: NextFunction) => {
         const {
-            short_image,
-            price_after,
-            price_before,
-            image_list,
             title,
             type,
-            max_player,
-            release_date,
-            language,
-            addition_info,
-            description,
-            addtion_images,
-            videos,
+            releaseDate,
             platform,
-            rate,
-            like,
-            dislike,
-            comment,
+            maxPlayer,
+            total,
+            status,
+            priceDefault,
+            priceDeposit,
+            discount,
+            priceOffical,
+            shortDescription,
+            imageList,
+            note,
+            description,
         } = req.body
 
         const product = new Product.default({
             _id: new mongoose.Types.ObjectId(),
-            short_image,
-            price_after,
-            price_before,
-            image_list,
             title,
             type,
-            max_player,
-            release_date,
-            language,
-            addition_info,
-            description,
-            addtion_images,
-            videos,
+            releaseDate,
             platform,
-            rate,
-            like,
-            dislike,
-            comment,
+            maxPlayer,
+            total,
+            status,
+            priceDefault,
+            priceDeposit,
+            discount,
+            priceOffical,
+            shortDescription,
+            imageList,
+            note,
+            description,
         })
 
         try {
             const productResult = await product.save()
-            return res.status(200).json({ productResult })
+            return res.status(200).json({ id: productResult._id, code: 200, message: 'Create Sucess' })
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({ code: 500, message: error })
         }
+    }
+
+    public static updateImage = async (req: Request, res: Response) => {
+        const id = req.body.id
+        console.log(id)
+        const myFile: string[] = req.file!.originalname.split('.')
+        const fileType = myFile[myFile.length - 1]
+
+        const params = {
+            Bucket: env.aws.bucketName,
+            Key: `${uuid()}.${fileType}`,
+            Body: req.file!.buffer,
+        }
+        s3.upload(params, async (error: Error, data: ManagedUpload.SendData) => {
+            if (error) {
+                return res.status(500).json({ code: 500, message: error })
+            } else {
+                console.log(data)
+                const product = await Product.default.findById(id)
+                if (product) {
+                    const imageList = product.imageList
+                    imageList?.push(data.Location)
+                    product.set(imageList)
+                    await product.save()
+                    console.log(product)
+                    return res.status(200).json({ code: 200, message: 'Upload image success' })
+                }
+            }
+        })
     }
 
     /** ================================================= */
@@ -65,7 +97,7 @@ export default class ProductController {
         try {
             const product = await Product.default.findById(productId)
             if (product) {
-                return res.status(200).json(product)
+                return res.status(200).json({ code: 200, message: 'Success', product })
             } else {
                 return res.status(400).json({ message: 'Not found' })
             }
@@ -79,7 +111,7 @@ export default class ProductController {
         try {
             const products = await Product.default.find()
             if (products) {
-                return res.status(200).json({ products })
+                return res.status(200).json({ code: 200, message: 'Success', products })
             } else {
                 return res.status(400).json({ message: 'Not found' })
             }
@@ -91,42 +123,48 @@ export default class ProductController {
     /** ================================================= */
     public static readByPage = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let strPage = req.query.page;
-            let page = 0;
+            const strPage = req.query.page
+            let page = 0
             if (strPage !== undefined) {
-                page = parseInt(strPage as string);
+                page = parseInt(strPage as string)
             }
-            let strPerPage = req.query.perPage;
-            let perPage = 30;
+            const strPerPage = req.query.perPage
+            let perPage = 30
             if (strPerPage !== undefined) {
-                perPage = parseInt(strPerPage as string);
+                perPage = parseInt(strPerPage as string)
             }
 
-            let strSort = req.query.sort;
-            let strOrder = req.query.order;
-            let sort = {};
+            const strSort = req.query.sort
+            const strOrder = req.query.order
+            let sort = {}
             if (strSort !== undefined && strOrder !== undefined) {
-                if ((strOrder as string).includes("ASC")) {
-                    sort = { [strSort as string]: 1 };
+                if ((strOrder as string).includes('ASC')) {
+                    sort = { [strSort as string]: 1 }
                 } else {
-                    sort = { [strSort as string]: -1 };
+                    sort = { [strSort as string]: -1 }
                 }
             }
 
-            let queryText = req.query.q;
-            let query = { };
-            if(queryText !== undefined){
-                query = {"title" :  {$regex : `${queryText}`}};
-                console.log(query);
-            }                        
-            let products = await Product.default.find(
-                query, {
+            const queryText = req.query.q
+            let query = {}
+            if (queryText !== undefined) {
+                query = { title: { $regex: `${queryText}` } }
+                console.log(query)
+            }
+            const products = await Product.default
+                .find(query, {
                     _id: 1,
-                    title: 1, price_before: 1, price_after: 1, platform: 1, short_image: 1
-                }
-            ).sort(sort).skip(page * perPage).limit(perPage);
+                    title: 1,
+                    priceDefault: 1,
+                    priceOffical: 1,
+                    platform: 1,
+                    imageList: 1,
+                })
+                .sort(sort)
+                .skip(page * perPage)
+                .limit(perPage)
             if (products) {
-                return res.status(200).json(products);
+                return res.status(200).json(products)
             } else {
                 return res.status(400).json({ message: 'Not found' })
             }
@@ -138,12 +176,12 @@ export default class ProductController {
     /** ================================================= */
     public static readPageNumber = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let queryText = req.query.q;
-            let query = { };
-            if(queryText !== undefined){
-                query = {"title" :  {$regex : `${queryText}`}};
-                console.log(query);
-            }  
+            const queryText = req.query.q
+            let query = {}
+            if (queryText !== undefined) {
+                query = { title: { $regex: `${queryText}` } }
+                console.log(query)
+            }
             const length = await Product.default.find(query).count()
             if (length) {
                 return res.status(200).json({ length })

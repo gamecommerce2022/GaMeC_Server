@@ -1,21 +1,22 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IProduct {
-    short_image: string
-    price_after: string
-    price_before: string
-    image_list: string[]
     title: string
-    type: string
-    max_player: string
-    release_date: string
-    language: string
-    addition_info: string
-    description: string[]
-    addtion_images: string[]
-    videos: string[]
+    type: string[]
+    releaseDate: string
     platform: string
-    rate: number
+    maxPlayer?: number
+    total: number
+    status?: string
+    priceDefault: number
+    priceDeposit?: number
+    discount?: number
+    priceOffical: number
+    shortDescription?: string
+    note?: string
+    imageList?: string[]
+    videoList?: string[]
+    description: string
     comment: {
         name: string
         content: string
@@ -29,21 +30,22 @@ export interface IProductModel extends IProduct, Document {}
 
 const IProductSchema: Schema = new Schema(
     {
-        short_image: { type: String, required: true },
-        price_after: { type: String, required: false },
-        price_before: { type: String, required: true },
-        image_list: { type: Schema.Types.Array, required: false },
         title: { type: String, required: true },
-        type: { type: String, required: true },
-        max_player: { type: String, required: false },
-        release_date: { type: String, required: false },
-        language: { type: String, required: false },
-        addition_info: { type: String, required: false },
-        description: { type: Schema.Types.Array, required: false },
-        addtion_images: { type: Schema.Types.Array, required: false },
-        videos: { type: Schema.Types.Array, required: false },
-        platform: { type: String, required: true },
-        rate: { type: Number, require: false },
+        type: [{ type: String, required: false }],
+        releaseDate: { type: String, required: false },
+        platform: { type: String, required: false },
+        maxPlayer: { type: Number, required: false },
+        total: { type: Number, required: false },
+        status: { type: String, required: false },
+        priceDefault: { type: Number, required: false },
+        priceDeposit: { type: Number, required: false },
+        discount: { type: Number, required: false },
+        priceOffical: { type: Number, required: false },
+        shortDescription: { type: String, required: false },
+        note: { type: String, required: false },
+        imageList: [{ type: String, required: false }],
+        videoList: [{ type: String, required: false }],
+        description: { type: String, required: false },
         comment: [
             {
                 name: { type: String, required: true },
