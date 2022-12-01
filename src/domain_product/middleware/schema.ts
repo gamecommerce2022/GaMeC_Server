@@ -1,55 +1,13 @@
 import Joi from 'joi'
-import { Product, Brand, Catergory, Discount, Info, Image } from '../model'
+import { Product, Brand, Catergory, Discount } from '../model'
 
 export const Schemas = {
     product: {
         create: Joi.object<Product.IProduct>({
-            short_image: Joi.string().required(),
-            price_after: Joi.string(),
-            price_before: Joi.string().required(),
-            image_list: Joi.array(),
-            title: Joi.string().required(),
-            type: Joi.string().required(),
-            max_player: Joi.string(),
-            release_date: Joi.string(),
-            language: Joi.string(),
-            addition_info: Joi.string(),
-            description: Joi.array(),
-            addtion_images: Joi.array(),
-            videos: Joi.array(),
-            platform: Joi.string().required(),
-            rate: Joi.number(),
-            like: Joi.number(),
-            dislike: Joi.number(),
-            comment: Joi.object({
-                name: Joi.string().required(),
-                content: Joi.string().required(),
-                date: Joi.string().required(),
-            }),
+
         }),
         update: Joi.object<Product.IProduct>({
-            short_image: Joi.string().required(),
-            price_after: Joi.string(),
-            price_before: Joi.string().required(),
-            image_list: Joi.array(),
-            title: Joi.string().required(),
-            type: Joi.string().required(),
-            max_player: Joi.string(),
-            release_date: Joi.string(),
-            language: Joi.string(),
-            addition_info: Joi.string(),
-            description: Joi.array(),
-            addtion_images: Joi.array(),
-            videos: Joi.array(),
-            platform: Joi.string().required(),
-            rate: Joi.number(),
-            like: Joi.number(),
-            dislike: Joi.number(),
-            comment: Joi.object({
-                name: Joi.string().required(),
-                content: Joi.string().required(),
-                date: Joi.string().required(),
-            }),
+
         }),
     },
     brand: {
