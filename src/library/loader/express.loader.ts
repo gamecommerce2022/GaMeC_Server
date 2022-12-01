@@ -43,6 +43,7 @@ export = () => {
     app.use(env.app.routePrefix, routeConfig.Product.default)
     app.use(env.app.routePrefix, routeConfig.Discount.default)
     app.use(env.app.routePrefix, routeConfig.UserRoute.default)
+    app.use(env.app.routePrefix, routeConfig.AuthRoute.default)
 
     // handle error
 
