@@ -9,7 +9,7 @@ export const Schemas = {
             firstName: Joi.string().required(),
             lastName: Joi.string().required(),
             email: Joi.string().email(),
-            password: Joi.string().required(),
+            password: Joi.string().min(10).required(),
             admin: Joi.bool().default(false),
         }),
         update: Joi.object<User.default>({

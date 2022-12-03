@@ -6,13 +6,17 @@ import { AuthenticationUtil } from '../utils/email_verification_util'
 import * as nodemailer from 'nodemailer'
 import * as jwt from 'jsonwebtoken'
 import { IUser } from '../../domain_user/model/user_model'
-import { token } from 'morgan'
 export default class AuthController {
     public static register = async (req: Request, res: Response) => {
         try {
             const userWithRequestedEmail = await User.default.findOne({ email: req.body.email })
             if (userWithRequestedEmail) {
-                res.status(409).json('Email existed')
+                res.status(409).json({
+                    statusCode: '409',
+                    message: 'Email existed',
+                    token: '',
+                    data: {},
+                })
                 return
             }
             const salt = await bcrypt.genSalt(10)
@@ -26,15 +30,36 @@ export default class AuthController {
                 password: hashed,
             })
             const user = await newUser.save()
-            const verifyToken = jwt.sign({}, process.env.JWT_ACCESS_TOKEN as jwt.Secret, { expiresIn: '1h' })
+
+            //token for auto login after signing up
+            const token = jwt.sign({ id: user.toObject()._id }, process.env.JWT_ACCESS_TOKEN as jwt.Secret, {
+                expiresIn: process.env.LOGIN_EXPIRATION_TIME as string,
+            })
+
+            //verify token for email verification
+            const verifyToken = jwt.sign({}, process.env.JWT_ACCESS_TOKEN as jwt.Secret, {
+                expiresIn: process.env.EMAIL_VERIFICATION_EXPIRATION_TIME as string,
+            })
             console.log(verifyToken)
 
             AuthController.sendVerificationEmail(user.toObject(), verifyToken)
-            res.status(200).json(user)
+            res.status(200).json({
+                statusCode: '200',
+                message: 'Success',
+                token,
+                data: {
+                    user: user,
+                },
+            })
         } catch (error) {
             console.log(error)
 
-            res.status(500).json(error)
+            res.status(500).json({
+                statusCode: '500',
+                message: 'Internal Server Error',
+                token: '',
+                data: {},
+            })
         }
     }
 
