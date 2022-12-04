@@ -6,15 +6,22 @@ import { AuthenticationUtil } from '../utils/email_verification_util'
 import * as nodemailer from 'nodemailer'
 import * as jwt from 'jsonwebtoken'
 import { IUser } from '../../domain_user/model/user_model'
+
+const signToken = (id: string) => {
+    return jwt.sign({ id }, process.env.JWT_ACCESS_TOKEN as jwt.Secret, {
+        expiresIn: process.env.LOGIN_EXPIRATION_TIME as string,
+    })
+}
 export default class AuthController {
     public static register = async (req: Request, res: Response) => {
+        let accessToken = null
         try {
             const userWithRequestedEmail = await User.default.findOne({ email: req.body.email })
             if (userWithRequestedEmail) {
                 res.status(409).json({
-                    statusCode: '409',
-                    message: 'Email existed',
-                    token: '',
+                    statusCode: 409,
+                    message: 'User existed',
+                    accessToken,
                     data: {},
                 })
                 return
@@ -32,9 +39,8 @@ export default class AuthController {
             const user = await newUser.save()
 
             //token for auto login after signing up
-            const token = jwt.sign({ id: user.toObject()._id }, process.env.JWT_ACCESS_TOKEN as jwt.Secret, {
-                expiresIn: process.env.LOGIN_EXPIRATION_TIME as string,
-            })
+
+            accessToken = signToken(user.id)
 
             //verify token for email verification
             const verifyToken = jwt.sign({}, process.env.JWT_ACCESS_TOKEN as jwt.Secret, {
@@ -46,7 +52,7 @@ export default class AuthController {
             res.status(200).json({
                 statusCode: '200',
                 message: 'Success',
-                token,
+                accessToken,
                 data: {
                     user: user,
                 },
@@ -57,33 +63,34 @@ export default class AuthController {
             res.status(500).json({
                 statusCode: '500',
                 message: 'Internal Server Error',
-                token: '',
+                accessToken,
                 data: {},
             })
         }
     }
 
     public static login = async (req: Request, res: Response) => {
+        let accessToken = null
         try {
-            const user = await User.default.findOne({ email: req.body.email })
+            const user = await User.default.findOne({ email: req.body.email }).select('+password')
             if (!user) {
-                res.status(404).json('Wrong username!')
+                return res.status(404).json({ statusCode: 404, message: 'User not found', accessToken })
             }
-            const validPassword = await bcrypt.compare(req.body.password, user?.password ?? '')
-            if (!validPassword) {
-                return res.status(404).json('Wrong password')
+            const correct = await user?.correctPassword(req.body.password, user?.password ?? '')
+            if (!correct) {
+                return res.status(401).json({ statusCode: 401, message: 'Wrong password', accessToken })
             }
-            if (user && validPassword) {
+            if (user && correct) {
                 //Should not get password property as bad guy somehow can decode the hashed password
                 const { password, ...others } = user.toObject()
 
-                const accessToken = jwt.sign({ others }, process.env.JWT_ACCESS_TOKEN as jwt.Secret, { expiresIn: '1h' })
-                return res.status(200).json({ ...others, accessToken })
+                accessToken = signToken(user.id)
+                return res.status(200).json({ statusCode: 200, message: 'Success', accessToken })
             }
         } catch (error) {
             console.log(error)
 
-            return res.status(500).json(error)
+            return res.status(500).json({ statusCode: 500, message: 'Internal server error', accessToken })
         }
     }
 
