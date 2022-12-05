@@ -10,7 +10,9 @@ export interface IUser {
     isVerified: boolean
     confirmationCode: string
     admin: boolean
+    passwordChangedAt: Date
     correctPassword(candidatePassword: string, userPassword: string): boolean
+    changePasswordAfter(jwtTimeStamp: any): boolean
 }
 
 const UserSchema: Schema = new Schema(
@@ -26,6 +28,7 @@ const UserSchema: Schema = new Schema(
         },
         confirmationCode: { type: String, unique: true },
         admin: { type: Boolean, default: false },
+        passwordChangedAt: { type: Date, default: Date.now() },
     },
     {
         timestamps: true,
@@ -34,6 +37,15 @@ const UserSchema: Schema = new Schema(
 )
 UserSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string) {
     return await bcrypt.compare(candidatePassword, userPassword)
+}
+
+UserSchema.methods.changePasswordAfter = function (jwtTimeStamp: any) {
+    if (this.passwordChangedAt) {
+        const changedTimeStampInSecond = this.passwordChangedAt.getTime() / 1000 //Convert from millisecond into second
+        const changedTimeStamp = parseInt(changedTimeStampInSecond.toString(), 10)
+        return jwtTimeStamp < changedTimeStamp // changed the password after the token was issued
+    }
+    return false
 }
 
 export default mongoose.model<IUser>('User', UserSchema)

@@ -35,6 +35,7 @@ export default class UserController {
     }
 
     public static readAll = async (req: Request, res: Response, next: NextFunction) => {
+        
         try {
             const users = await User.default.find()
             if (users) {
