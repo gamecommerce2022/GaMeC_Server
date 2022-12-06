@@ -10,6 +10,11 @@ router.post(`${userPrefix}/create`, ValidateJoi(Schemas.user.create), User.defau
 router.get(`${userPrefix}/get/:userId`, User.default.read)
 router.get(`${userPrefix}/get/`, AuthController.protect, User.default.readAll)
 router.patch(`${userPrefix}/update/:userId`, ValidateJoi(Schemas.user.create), User.default.update)
-router.delete(`${userPrefix}/delete/:userId`, User.default.delete)
+router.delete(
+    `${userPrefix}/delete/:userId`,
+    AuthController.protect,
+    AuthController.restrictTo('admin'),
+    User.default.delete
+)
 
 export default router

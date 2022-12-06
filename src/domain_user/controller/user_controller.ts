@@ -35,7 +35,6 @@ export default class UserController {
     }
 
     public static readAll = async (req: Request, res: Response, next: NextFunction) => {
-        
         try {
             const users = await User.default.find()
             if (users) {
@@ -75,12 +74,21 @@ export default class UserController {
         try {
             const user = await User.default.findByIdAndDelete(userId)
             if (user) {
-                return res.status(200).json({ message: 'Delete Success' })
+                return res.status(200).json({
+                    statusCode: 200,
+                    message: 'Success',
+                })
             } else {
-                return res.status(400).json({ message: 'Not found' })
+                return res.status(400).json({
+                    statusCode: 400,
+                    message: 'User not found',
+                })
             }
         } catch (error) {
-            return res.status(500).json({ error })
+            return res.status(500).json({
+                statusCode: 500,
+                message: error,
+            })
         }
     }
 }

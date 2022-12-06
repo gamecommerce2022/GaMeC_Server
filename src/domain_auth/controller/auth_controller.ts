@@ -14,6 +14,21 @@ const signToken = (id: string) => {
     })
 }
 export default class AuthController {
+    public static restrictTo = (...roles: string[]) => {
+        return (req: Request, res: Response, next: NextFunction) => {
+            //roles = ['admin','lead-guide']
+            if (!roles.includes(req.body.user.role)) {
+                return next(
+                    res.status(403).json({
+                        statusCode: 403,
+                        message: 'Permission denied',
+                    })
+                )
+            }
+            next()
+        }
+    }
+
     public static protect = async (req: Request, res: Response, next: NextFunction) => {
         try {
             let token
@@ -85,9 +100,8 @@ export default class AuthController {
             const verifyToken = jwt.sign({}, process.env.JWT_ACCESS_TOKEN as jwt.Secret, {
                 expiresIn: process.env.EMAIL_VERIFICATION_EXPIRATION_TIME as string,
             })
-            console.log(verifyToken)
 
-            AuthController.sendVerificationEmail(user.toObject(), verifyToken)
+            // AuthController.sendVerificationEmail(user.toObject(), verifyToken)
             res.status(200).json({
                 statusCode: '200',
                 message: 'Success',

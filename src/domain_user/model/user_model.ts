@@ -8,8 +8,7 @@ export interface IUser {
     email: string
     password: string
     isVerified: boolean
-    confirmationCode: string
-    admin: boolean
+    role: string
     passwordChangedAt: Date
     correctPassword(candidatePassword: string, userPassword: string): boolean
     changePasswordAfter(jwtTimeStamp: any): boolean
@@ -26,8 +25,11 @@ const UserSchema: Schema = new Schema(
             type: Boolean,
             default: false,
         },
-        confirmationCode: { type: String, unique: true },
-        admin: { type: Boolean, default: false },
+        role: {
+            type: String,
+            enum: ['user', 'admin'],
+            default: 'user',
+        },
         passwordChangedAt: { type: Date, default: Date.now() },
     },
     {
