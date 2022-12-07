@@ -1,0 +1,12 @@
+{
+    "type": "service_account",
+    "project_id": "game-ecomemerce",
+    "private_key_id": "2f708b629c04791222915bbafca9a1d8b9472c91",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCe6f7okaBi97uQ\nqz6iYb0QBU+mITN0BmEglmKaK6TsEZN/3xEu1N4eNz8nopV6M5N+/lZB4VjU0rlM\nxa8KWaEup4nEH7X5GrBvVTnhERrdUg8nbPMYvTfLWT8Wmsbcm0ePe8CUUYBK07FJ\nsQQG5sBGpCzvCAqynhjEVfl9DS9Vo0+6bjEGhDlVvuTK2egLZkOsH+QfGBvmGVl8\nExYYvCjwr6CMhzvluYUmSvgKera1fY6MNbFP5Vm+mmqK0gYX98l3HLNZULPRkyyn\nwBl0PoJIKkFbBWJ6TJ0dsKRQosL0UQpDOZaYlyol0zCUy6+EeCLnr4dRXAAD/GSw\nPS5+iaB9AgMBAAECggEALrnS8ANRy4fYKNORWSGv+7P0FX8Rp/3wNSrC114Z4ifQ\n3Pp0DPceUHgiI79UgFgF+INETZ67Bejn/0DpFPwBvrwYcAh680H7uuCuYhUrdwQX\n3JnWaOHKNAqL2FOuQVOPGQtkNrg4JshUCrz32CelRaAkbixJKPf/hEtbTn+/+UfT\nFcWHBtvIN2C0LATtKBfvhupebM4wn+mG/mk13Yj68bFkI5bH45XfVsYwrWHxRR13\ndJEyrsCpIvC5ErovTOSCjnO9DQm06f4si/9EijuZI1rN37E/zvYyWrcTZp9R7IUS\nwg2Sh0B2mQh9aSf4DHyd3YWLLCWhhobd2ANBWV9H6QKBgQDOoIyp1Ly+smg5Kuoq\nFxuWJejtopu5IHyUMCr+sLpDXzALQyTyp0A38n4XjannU69DWHw2+84nx/L33+M4\nTHQK1X+z8Cl8kBPToHVfACrhedV33OuUzD9lcG9jIOzrl/nbP56ofSQvruTmwovs\n48hTetPVl5BpxIg2tB64fok8owKBgQDE4tH5YuVh4trO2MEz4lDmc7k3fKnoT3RY\nkt8v1zDW1vlUBKmG0/VsYv6YpgRmZAclQoqyyjqI01Fw+XumZ3tbHVhLeELm90YH\nkC6VcsXd4JXd5D8qzeHWjVNY3TOWvr3pfhZrNqS4EsZZGobziWBPCcK8aTLJ0Vfn\niWBBmJVgXwKBgQCKNr6gw5rVfIVW6Cvmp7peP1GF06WSufZbMbUw1IpjkoKSpgFL\nBzFfuyc5Hhuujz3HMKM2LE2EMq2FvQ9Ck3Fz5cgcVuOJXN7GSqj4OSZ12IdAPFih\nGda2RfVcO6P/G5OYYv//+GWCN90JtszeUqenn5ufXljNRxdOcEG0a3/lPQKBgBX6\njB4e4CRxQqPcppS4KvfO61o6XG1GkWJh4vBgQV96WBL9Aj++4aLb2jgIMG2NtQ5/\nwyP6V1Z24JyP/TGyU570Q6sJHc7Sw8qMWebtDRGbxJ8kn7iTiyZ8WFWPO/cUC/dI\n0A/f5bt2vRWtVGtTZqDsIgUOaVEGQZ3jRA+OjP5ZAoGAGt9lSUwpoGoFMKZDjKiI\nsymA9vf+In0RvomNaY1p56mpt2YYHAtx8XualDkEUDvxOtykbhKj3fgdKWyVX8A2\nyKocOQE9rp+7L8cAuzUywfdV4ddqOrkUVJ/S9fulZvToA4dtVyfZCP9ELMeYx3Wu\nBlfeY4LjwFS4yQJHyHeJXf0=\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-eueo4@game-ecomemerce.iam.gserviceaccount.com",
+    "client_id": "118038139507314109006",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-eueo4%40game-ecomemerce.iam.gserviceaccount.com"
+}
