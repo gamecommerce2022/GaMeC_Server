@@ -73,28 +73,28 @@ export default class NewsController {
                     // By A - Z
                     case 1: {
                         const newsList = await News.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
-                            _id: 1, title: 1, category: 1, author: 1, date: 1,
+                            _id: 1, title: 1, category: 1, author: 1, date: 1, shortDescription: 1, mainImage: 1
                         }).sort({ title: 1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, newsList: newsList })
                     }
                     // By Z - A
                     case 2: {
                         const newsList = await News.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
-                            _id: 1, title: 1, category: 1, author: 1, date: 1,
+                            _id: 1, title: 1, category: 1, author: 1, date: 1, shortDescription: 1, mainImage: 1
                         }).sort({ title: -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, newsList: newsList })
                     }
                     // By Date Old to New
                     case 3: {
                         const newsList = await News.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
-                            _id: 1, title: 1, category: 1, author: 1, date: 1,
+                            _id: 1, title: 1, category: 1, author: 1, date: 1, shortDescription: 1, mainImage: 1
                         }).sort({ date: 1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, newsList: newsList })
                     }
                     // By Date New to Old
                     case 4: {
                         const newsList = await News.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
-                            _id: 1, title: 1, category: 1, author: 1, date: 1,
+                            _id: 1, title: 1, category: 1, author: 1, date: 1, shortDescription: 1, mainImage: 1
                         }).sort({ date: -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, newsList: newsList })
                     }
@@ -102,7 +102,7 @@ export default class NewsController {
 
             }
             const newsList = await News.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
-                _id: 1, title: 1, category: 1, author: 1, date: 1,
+                _id: 1, title: 1, category: 1, author: 1, date: 1, shortDescription: 1, mainImage: 1
             }).skip(pageNumber * pageLimit).limit(pageLimit)
             return res.status(200).json({ code: 200, newsList: newsList })
         } catch (error) {
