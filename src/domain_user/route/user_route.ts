@@ -1,14 +1,20 @@
 import express from 'express'
+import AuthController from '../../domain_auth/controller/auth_controller'
 import { ValidateJoi } from '../../middleware/Joi'
 import { User } from '../controller'
 import { Schemas } from '../middleware'
 
 const router = express.Router()
-
-router.post('/create', ValidateJoi(Schemas.user.create), User.default.create)
-router.get('/get/:userId', User.default.read)
-router.get('/get/', User.default.readAll)
-router.patch('/update/:userId', ValidateJoi(Schemas.user.create), User.default.update)
-router.delete('/delete/:userId', User.default.delete)
+const userPrefix = '/user'
+router.post(`${userPrefix}/create`, ValidateJoi(Schemas.user.create), User.default.create)
+router.get(`${userPrefix}/get/:userId`, User.default.read)
+router.get(`${userPrefix}/get/`, AuthController.protect, User.default.readAll)
+router.patch(`${userPrefix}/update/:userId`, ValidateJoi(Schemas.user.create), User.default.update)
+router.delete(
+    `${userPrefix}/delete/:userId`,
+    AuthController.protect,
+    AuthController.restrictTo('admin'),
+    User.default.delete
+)
 
 export default router

@@ -5,9 +5,13 @@ import { Schemas } from '../../domain_user/middleware'
 const router = express.Router()
 
 /**authentication */
-const authPrefix = '/v1/auth'
+const authPrefix = '/auth'
 
 router.post(`${authPrefix}/register`, ValidateJoi(Schemas.user.create), AuthController.register)
 router.post(`${authPrefix}/login`, AuthController.login)
+
+router.post(`${authPrefix}/forgot-password`, AuthController.forgotPassword)
+router.patch(`${authPrefix}/reset-password/:token`, AuthController.resetPassword)
+
 router.get(`/verify/:email/:token`, AuthController.verifyEmail)
 export default router
