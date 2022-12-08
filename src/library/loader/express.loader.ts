@@ -38,10 +38,9 @@ export = () => {
     app.options('*', cors())
 
     // api routes
-    app.use(env.app.routePrefix, routeConfig.Brand.default)
-    app.use(env.app.routePrefix, routeConfig.Category.default)
     app.use(env.app.routePrefix, routeConfig.Product.default)
-    app.use(env.app.routePrefix, routeConfig.Discount.default)
+    app.use(env.app.routePrefix, routeConfig.News.default)
+    app.use(env.app.routePrefix, routeConfig.Comment.default)
     app.use(env.app.routePrefix, routeConfig.UserRoute.default)
     app.use(env.app.routePrefix, routeConfig.AuthRoute.default)
 

@@ -155,7 +155,7 @@ export default class AuthController {
             console.log('email is' + email)
             User.default
                 .updateOne({ email: email }, { $set: { isVerified: true } })
-                .then((_) => console.log('User found and modified email token'))
+                .then(() => console.log('User found and modified email token'))
 
             return res.json({ status: 'okay' })
         } catch (error) {
