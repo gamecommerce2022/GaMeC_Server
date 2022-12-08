@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import * as bcrypt from 'bcrypt'
-
+import * as crypto from 'crypto'
 export interface IUser {
     firstName: string
     lastName: string
@@ -10,8 +10,11 @@ export interface IUser {
     isVerified: boolean
     role: string
     passwordChangedAt: Date
+    passwordResetToken: string
+    passwordResetExpires: Date
     correctPassword(candidatePassword: string, userPassword: string): boolean
     changePasswordAfter(jwtTimeStamp: any): boolean
+    createPasswordResetToken(): string
 }
 
 const UserSchema: Schema = new Schema(
@@ -31,6 +34,8 @@ const UserSchema: Schema = new Schema(
             default: 'user',
         },
         passwordChangedAt: { type: Date, default: Date.now() },
+        passwordResetToken: { type: String },
+        passwordResetExpires: { type: Date },
     },
     {
         timestamps: true,
@@ -49,5 +54,14 @@ UserSchema.methods.changePasswordAfter = function (jwtTimeStamp: any) {
     }
     return false
 }
+UserSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('base64')
 
+    console.log({ resetToken }, this.passwordResetToken)
+
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000
+
+    return resetToken
+}
 export default mongoose.model<IUser>('User', UserSchema)

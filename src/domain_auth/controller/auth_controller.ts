@@ -1,11 +1,10 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, response, Response } from 'express'
 import { User } from '../../domain_user/model'
 import * as bcrypt from 'bcrypt'
 import { google } from 'googleapis'
 import { AuthenticationUtil } from '../utils/email_verification_util'
 import * as nodemailer from 'nodemailer'
 import * as jwt from 'jsonwebtoken'
-import { promisify } from 'util'
 import { IUser } from '../../domain_user/model/user_model'
 
 const signToken = (id: string) => {
@@ -101,7 +100,7 @@ export default class AuthController {
                 expiresIn: process.env.EMAIL_VERIFICATION_EXPIRATION_TIME as string,
             })
 
-            // AuthController.sendVerificationEmail(user.toObject(), verifyToken)
+            AuthController.sendVerificationEmail(user.toObject(), verifyToken)
             res.status(200).json({
                 statusCode: '200',
                 message: 'Success',
@@ -170,8 +169,9 @@ export default class AuthController {
         oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN })
         const accessToken = await oauth2Client.getAccessToken()
 
+
         const transport = nodemailer.createTransport({
-            service: 'gmail',
+            service: 'Gmail',
             auth: {
                 type: 'OAuth2',
                 user: process.env.EMAIL_ADDRESS,
@@ -192,5 +192,23 @@ export default class AuthController {
                 console.log(info.envelope)
             }
         )
+    }
+
+    public static forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+        // 1) Get user based on POSTed email
+        const user = await User.default.findOne({ email: req.body.email })
+
+        if (!user) {
+            next(res.status(404).json({ statusCode: 404, message: 'There is no user with that email address' }))
+        }
+
+        // 2) Generate the random reset token
+        const resetToken = user?.createPasswordResetToken()
+
+        await user?.save({ validateBeforeSave: false })
+        // 3) Send it to user's email
+    }
+    public static resetPassword = (req: Request, res: Response, next: NextFunction) => {
+        console.log('')
     }
 }
