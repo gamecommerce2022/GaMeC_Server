@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
+import { NextFunction } from 'express'
 export interface IUser {
     firstName: string
     lastName: string
@@ -10,8 +11,8 @@ export interface IUser {
     isVerified: boolean
     role: string
     passwordChangedAt: Date
-    passwordResetToken: string
-    passwordResetExpires: Date
+    passwordResetToken?: string
+    passwordResetExpires?: Date
     correctPassword(candidatePassword: string, userPassword: string): boolean
     changePasswordAfter(jwtTimeStamp: any): boolean
     createPasswordResetToken(): string
@@ -42,7 +43,30 @@ const UserSchema: Schema = new Schema(
         versionKey: false,
     }
 )
+
+UserSchema.pre('save', async function (next) {
+    // Only run this function if the password was actually modified.
+    if (!this.isModified('password') || this.isNew) return next()
+
+    // Hash the password with cost of 12
+    const salt = await bcrypt.genSalt(12)
+    this.password = await bcrypt.hash(this.password, salt)
+
+    next()
+})
+
+UserSchema.pre('save', function (next) {
+    if (!this.isModified('password') || this.isNew) return next()
+
+    this.passwordChangedAt = Date.now() - 1000
+    next()
+})
+
 UserSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string) {
+    console.log(candidatePassword)
+    console.log(userPassword)
+    console.log(await bcrypt.compare(candidatePassword, userPassword))
+
     return await bcrypt.compare(candidatePassword, userPassword)
 }
 
@@ -56,7 +80,7 @@ UserSchema.methods.changePasswordAfter = function (jwtTimeStamp: any) {
 }
 UserSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString('hex')
-    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('base64')
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
 
     console.log({ resetToken }, this.passwordResetToken)
 
