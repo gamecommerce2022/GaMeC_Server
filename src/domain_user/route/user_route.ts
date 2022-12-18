@@ -9,6 +9,11 @@ const userPrefix = '/user'
 router.post(`${userPrefix}/create`, ValidateJoi(Schemas.user.create), User.default.create)
 router.get(`${userPrefix}/get/:userId`, User.default.read)
 router.get(`${userPrefix}/get/`, AuthController.protect, User.default.readAll)
+
+router.patch(`${userPrefix}/update-password`, AuthController.protect, AuthController.updatePassword)
+
+router.patch(`${userPrefix}/update-me`, AuthController.protect, User.default.updateMe)
+
 router.patch(`${userPrefix}/update/:userId`, ValidateJoi(Schemas.user.create), User.default.update)
 router.delete(
     `${userPrefix}/delete/:userId`,

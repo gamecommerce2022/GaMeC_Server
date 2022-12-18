@@ -14,4 +14,5 @@ router.post(`${authPrefix}/forgot-password`, AuthController.forgotPassword)
 router.patch(`${authPrefix}/reset-password/:token`, AuthController.resetPassword)
 
 router.get(`/verify/:email/:token`, AuthController.verifyEmail)
+
 export default router
