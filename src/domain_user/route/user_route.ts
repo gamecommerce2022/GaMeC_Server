@@ -14,7 +14,6 @@ router.patch(`${userPrefix}/update-password`, AuthController.protect, AuthContro
 
 router.patch(`${userPrefix}/update-me`, AuthController.protect, User.default.updateMe)
 
-router.patch(`${userPrefix}/update/:userId`, ValidateJoi(Schemas.user.create), User.default.update)
 router.delete(
     `${userPrefix}/delete/:userId`,
     AuthController.protect,

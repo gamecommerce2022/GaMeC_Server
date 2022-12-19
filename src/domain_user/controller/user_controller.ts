@@ -57,26 +57,6 @@ export default class UserController {
         }
     }
 
-    public static update = async (req: Request, res: Response, next: NextFunction) => {
-        const userId = req.params.userId
-
-        try {
-            const user = await User.default.findById(userId)
-            if (user) {
-                user.set(req.body)
-                try {
-                    await user.save()
-                    return res.status(200).json({ user })
-                } catch (error) {
-                    return res.status(501).json({ error })
-                }
-            } else {
-                return res.status(400).json({ message: 'Not found' })
-            }
-        } catch (error) {
-            return res.status(500).json({ error })
-        }
-    }
 
     public static updateMe = async (req: Request, res: Response, next: NextFunction) => {
         //1) Create error if user POSTs password data
