@@ -183,7 +183,7 @@ export default class AuthController {
 
         // 3) Send it to user's email
         try {
-            const resetUrl = `${process.env.SERVER_URL}/api/user/reset-password/${resetToken}`
+            const resetUrl = `${process.env.SERVER_URL}/api/auth/reset-password/${resetToken}`
 
             const message = `Forgot your password? Submit a PATCH request with a new password to ${resetUrl}\n If you didn't forget your password, please ignore this email`
 
