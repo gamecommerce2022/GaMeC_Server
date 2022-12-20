@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose'
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
 import { NextFunction } from 'express'
+import { IProduct } from '../../domain_product/info/model'
 export interface IUser {
     firstName: string
     lastName: string
@@ -13,8 +14,11 @@ export interface IUser {
     passwordChangedAt: Date
     passwordResetToken?: string
     passwordResetExpires?: Date
+    favorites: string[]
     correctPassword(candidatePassword: string, userPassword: string): boolean
     changePasswordAfter(jwtTimeStamp: any): boolean
+    addToFavorites(productId: string): boolean
+    removeFromFavorites(productId: string): boolean
     createPasswordResetToken(): string
 }
 
@@ -37,6 +41,7 @@ const UserSchema: Schema = new Schema(
         passwordChangedAt: { type: Date, default: Date.now() },
         passwordResetToken: { type: String },
         passwordResetExpires: { type: Date },
+        favorites: [{ type: String }],
     },
     {
         timestamps: true,
@@ -87,5 +92,20 @@ UserSchema.methods.createPasswordResetToken = function () {
     this.passwordResetExpires = Date.now() + 10 * 60 * 1000
 
     return resetToken
+}
+
+UserSchema.methods.addToFavorites = function (productId: string) {
+    this.favorites = [...this.favorites, productId]
+    const set = new Set(this.favorites)
+    this.favorites = Array.from(set)
+    console.log(this.favorites.length)
+
+    return true
+}
+
+UserSchema.methods.removeFromFavorites = function (productId: string) {
+    this.favorites = this.favorites.filter((favorite: string) => favorite !== productId)
+    console.log(this.favorites)
+    return true
 }
 export default mongoose.model<IUser>('User', UserSchema)

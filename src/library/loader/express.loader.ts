@@ -41,9 +41,9 @@ export = () => {
     app.use(env.app.routePrefix, routeConfig.Product.default)
     app.use(env.app.routePrefix, routeConfig.News.default)
     app.use(env.app.routePrefix, routeConfig.Comment.default)
+    app.use(env.app.routePrefix, routeConfig.Shopping.default)
     app.use(env.app.routePrefix, routeConfig.UserRoute.default)
     app.use(env.app.routePrefix, routeConfig.AuthRoute.default)
-
     // handle error
 
     app.listen(env.app.port)
