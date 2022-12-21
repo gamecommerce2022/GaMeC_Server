@@ -1,8 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
-import { NextFunction } from 'express'
-import { IProduct } from '../../domain_product/info/model'
 export interface IUser {
     firstName: string
     lastName: string

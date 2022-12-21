@@ -11,4 +11,7 @@ router.post(`${shoppingPrefix}/add-to-favorites`, AuthController.protect, Shoppi
 router.post(`${shoppingPrefix}/remove-from-favorites`, AuthController.protect, ShoppingController.removeFromFavorites)
 
 router.get(`${shoppingPrefix}/get-favorites`, AuthController.protect, ShoppingController.getFavorites)
+
+
+router.get(`${shoppingPrefix}/checkout-session/:productId`, AuthController.protect, ShoppingController.getCheckoutSession)
 export default router
