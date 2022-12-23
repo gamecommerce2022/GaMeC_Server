@@ -7,7 +7,7 @@ export interface IUser {
     displayName: string
     email: string
     password: string
-    isVerified: boolean
+    isVerified: boolean 
     role: string
     passwordChangedAt: Date
     passwordResetToken?: string
@@ -21,6 +21,7 @@ export interface IUser {
 }
 
 const UserSchema: Schema = new Schema(
+    
     {
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },

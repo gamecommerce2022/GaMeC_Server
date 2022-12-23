@@ -7,7 +7,7 @@ import monitorLoader from './library/loader/monitor.loader'
 import publicLoader from './library/loader/public.loader'
 import swaggerLoader from './library/loader/swagger.loader'
 import winstonLoader from './library/loader/winston.loader'
-
+import stripeLoader from './library/loader/stripe.loader'
 // const router = express();
 
 // /** Connect with Mongo DB */
@@ -84,6 +84,7 @@ async function initApp() {
     swaggerLoader(app)
 
     // passport init
+    // stripeLoader(app)
 
     // public Url
     publicLoader(app)
