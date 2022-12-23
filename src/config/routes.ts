@@ -4,4 +4,5 @@ import * as News from '../domain_new/route'
 import { UserRoute } from '../domain_user/route'
 import { AuthRoute } from '../domain_auth/route'
 import * as Shopping from '../domain_product/shopping/route'
-export const routeConfig = { Product, News, Comment, Shopping, UserRoute, AuthRoute }
+import * as Info from '../domain_info/route'
+export const routeConfig = { Product, News, Comment, Shopping, UserRoute, AuthRoute, Info }
