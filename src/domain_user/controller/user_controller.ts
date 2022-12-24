@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import { User } from '../model'
+import * as jwt from 'jsonwebtoken'
 
 const filterObj = (obj: any, ...allowedFields: string[]) => {
     Object.keys(obj).forEach((el) => {
@@ -56,7 +57,33 @@ export default class UserController {
             return res.status(500).json({ error })
         }
     }
+    public static getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let token
+            if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+                token = req.headers.authorization.split(' ')[1]
+            }
 
+            // 2) Verification Token
+            if (!token) {
+                return next(res.status(404).json({ statusCode: 404, user: null }))
+            }
+            const decoded = (await jwt.verify(token, process.env.JWT_ACCESS_TOKEN as jwt.Secret)) as jwt.JwtPayload
+
+            // 3) Check if the user still exists
+            const currentUser = await User.default.findById(decoded.id)
+
+            if (!currentUser) {
+                return next(res.status(404).json({ statusCode: 404, user: null }))
+            }
+            return next(res.status(200).json({ statusCode: 200, user: currentUser }))
+        } catch (error: any) {
+            console.log(error)
+
+            return res.status(401).json({ statusCode: 401, message: error.message })
+        }
+        // 1) Getting token and check of it's there
+    }
 
     public static updateMe = async (req: Request, res: Response, next: NextFunction) => {
         //1) Create error if user POSTs password data
