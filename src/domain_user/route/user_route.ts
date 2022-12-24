@@ -20,5 +20,5 @@ router.delete(
     AuthController.restrictTo('admin'),
     User.default.delete
 )
-
+router.post(`${userPrefix}/get-current-user`, User.default.getCurrentUser)
 export default router
