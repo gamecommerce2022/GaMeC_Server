@@ -1,8 +1,8 @@
 import { IUser } from '../../domain_user/model/user_model'
 
 export class AuthenticationUtil {
-    public static getHtmlMessage(user: IUser, token: string) {
-        const verifyLink = `${process.env.SERVER_URL}/api/verify/${user.email}/${token}`
+    public static getVerificationMessage(user: IUser, token: string) {
+        const verifyLink = `${process.env.CLIENT_URL}/verify-account/${user.email}/${token}`
         return `<!DOCTYPE html>
         <html>
         
@@ -232,7 +232,6 @@ export class AuthenticationUtil {
 
     public static getForgetPasswordMessage(resetToken: string) {
         const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
-        console.log(resetLink)
         return `<!DOCTYPE html>
 
         <html lang="en" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
