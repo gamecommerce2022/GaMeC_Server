@@ -7,21 +7,24 @@ export interface IUser {
     displayName: string
     email: string
     password: string
-    isVerified: boolean 
+    isVerified: boolean
     role: string
     passwordChangedAt: Date
     passwordResetToken?: string
     passwordResetExpires?: Date
     favorites: string[]
+    carts: string[]
     correctPassword(candidatePassword: string, userPassword: string): boolean
     changePasswordAfter(jwtTimeStamp: any): boolean
     addToFavorites(productId: string): boolean
     removeFromFavorites(productId: string): boolean
+    addToCart(productId: string): boolean
+    removeFromCart(productId: string): boolean
     createPasswordResetToken(): string
 }
 
 const UserSchema: Schema = new Schema(
-    
+
     {
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
@@ -41,6 +44,7 @@ const UserSchema: Schema = new Schema(
         passwordResetToken: { type: String },
         passwordResetExpires: { type: Date },
         favorites: [{ type: String }],
+        carts: [{ type: String }],
     },
     {
         timestamps: true,
@@ -105,6 +109,21 @@ UserSchema.methods.addToFavorites = function (productId: string) {
 UserSchema.methods.removeFromFavorites = function (productId: string) {
     this.favorites = this.favorites.filter((favorite: string) => favorite !== productId)
     console.log(this.favorites)
+    return true
+}
+
+UserSchema.methods.addToCart = function (productId: string) {
+    this.carts = [...this.carts, productId]
+    const set = new Set(this.carts)
+    this.carts = Array.from(set)
+    console.log(this.carts.length)
+
+    return true
+}
+
+UserSchema.methods.removeFromCart = function (productId: string) {
+    this.carts = this.carts.filter((cart: string) => cart !== productId)
+    console.log(this.carts)
     return true
 }
 export default mongoose.model<IUser>('User', UserSchema)
