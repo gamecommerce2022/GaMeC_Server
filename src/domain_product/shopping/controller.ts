@@ -52,6 +52,35 @@ export default class ShoppingController {
         return next(res.status(200).json({ statusCode: 200, message: 'Success', data: user.toObject().favorites }))
     }
 
+    public static addToCart = async (req: Request, res: Response, next: NextFunction) => {
+        const user = await User.default.findById(req.body.user.id)
+
+        if (!user) return next(res.status(401).json({ statusCode: 401, message: 'Unauthorized' }))
+        if (user.carts.includes(req.body.productId))
+            return res.status(409).json({ statusCode: 409, message: 'Item already existed' })
+        user.addToCart(req.body.productId)
+        await user.save({ validateBeforeSave: false })
+        return next(res.status(200).json({ statusCode: 200, message: 'Success' }))
+    }
+    public static removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
+        const user = await User.default.findById(req.body.user.id)
+
+        if (!user) return next(res.status(401).json({ statusCode: 401, message: 'Unauthorized' }))
+
+        if (!user.carts.includes(req.body.productId))
+            return res.status(404).json({ statusCode: 404, message: 'Item not found is list' })
+
+        user.removeFromCart(req.body.productId)
+        await user.save({ validateBeforeSave: false })
+        return next(res.status(200).json({ statusCode: 200, message: 'Success' }))
+    }
+    public static getCarts = async (req: Request, res: Response, next: NextFunction) => {
+        const user = await User.default.findById(req.body.user.id)
+        if (!user) return next(res.status(401).json({ statusCode: 401, message: 'Unauthorized', data: null }))
+
+        return next(res.status(200).json({ statusCode: 200, message: 'Success', data: user.toObject().carts }))
+    }
+
     public static getCheckoutSession = async (req: Request, res: Response, next: NextFunction) => {
         //1) Get the currently selected product
         const product = await Product.default.findById(req.params.productId)

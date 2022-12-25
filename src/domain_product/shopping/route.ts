@@ -12,6 +12,11 @@ router.post(`${shoppingPrefix}/remove-from-favorites`, AuthController.protect, S
 
 router.get(`${shoppingPrefix}/get-favorites`, AuthController.protect, ShoppingController.getFavorites)
 
+router.post(`${shoppingPrefix}/add-to-carts`, AuthController.protect, ShoppingController.addToCart)
+router.post(`${shoppingPrefix}/remove-from-carts`, AuthController.protect, ShoppingController.removeFromCart)
+
+router.get(`${shoppingPrefix}/get-carts`, AuthController.protect, ShoppingController.getCarts)
+
 
 router.get(`${shoppingPrefix}/checkout-session/:productId`, AuthController.protect, ShoppingController.getCheckoutSession)
 export default router
