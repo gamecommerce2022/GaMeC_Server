@@ -241,7 +241,7 @@ export default class AuthController {
             'The GaMeC Team',
             user.email,
             "Let's get you verified 🎮",
-            AuthenticationUtil.getHtmlMessage(user, token)
+            AuthenticationUtil.getVerificationMessage(user, token)
         )
     }
     public static sendResetEmail = async (user: IUser, resetToken: string) => {
