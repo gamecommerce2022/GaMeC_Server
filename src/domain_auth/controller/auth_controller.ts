@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { User } from '../../domain_user/model'
 import * as bcrypt from 'bcrypt'
-import { google } from 'googleapis'
+import { Auth, google } from 'googleapis'
 import { AuthenticationUtil } from '../utils/email_verification_util'
 import * as nodemailer from 'nodemailer'
 import * as crypto from 'crypto'
@@ -183,11 +183,7 @@ export default class AuthController {
 
         // 3) Send it to user's email
         try {
-            const resetUrl = `${process.env.SERVER_URL}/api/auth/reset-password/${resetToken}`
-
-            const message = `Forgot your password? Submit a PATCH request with a new password to ${resetUrl}\n If you didn't forget your password, please ignore this email`
-
-            await EmailUtil.sendEmail('The GaMeC Team', user.email, 'Reset your password', message)
+            await AuthController.sendResetEmail(user.toObject(), resetToken)
 
             return res.status(200).json({ statusCode: 200, message: 'Token sent to email' })
         } catch (error) {
@@ -246,6 +242,14 @@ export default class AuthController {
             user.email,
             "Let's get you verified 🎮",
             AuthenticationUtil.getHtmlMessage(user, token)
+        )
+    }
+    public static sendResetEmail = async (user: IUser, resetToken: string) => {
+        await EmailUtil.sendEmail(
+            'The GaMeC Team',
+            user.email,
+            "Let's get you back to the game 🤘",
+            AuthenticationUtil.getForgetPasswordMessage(resetToken)
         )
     }
 }
