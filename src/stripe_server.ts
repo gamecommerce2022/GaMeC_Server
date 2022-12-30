@@ -3,9 +3,9 @@ import express from 'express'
 import env from 'dotenv'
 import ShoppingController from './domain_product/shopping/controller'
 import { stripVTControlCharacters } from 'util'
+import mongooseLoader from './library/loader/mongoose.loader'
 
 env.config()
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
     apiVersion: '2022-11-15',
 })
@@ -28,6 +28,7 @@ app.post(
     // Stripe requires the raw body to construct the event
     express.raw({ type: 'application/json' }),
     async (req: express.Request, res: express.Response) => {
+        await mongooseLoader()
         const sig = req.headers['stripe-signature'] as string
 
         let event: Stripe.Event
@@ -41,16 +42,21 @@ app.post(
             return
         }
         const json = JSON.parse(JSON.stringify(event.data.object))
-        console.log('id: ' + json.id)
+        // console.log('json: ' + JSON.stringify(json))
         // Successfully constructed event
         // console.log('✅ Success:', event.id)
         // console.log('event' + JSON.stringify(event))
 
         // Cast event data to Stripe object
-        if (event.type === 'checkout_session.completed') {
+        if (event.type === 'checkout.session.completed') {
+            console.log('checkout.session.completed')
+            console.log('checkout session data' + JSON.stringify(json))
+            
             await ShoppingController.updateBillingStatus(json.id, 'success')
         } else if (event.type === 'charge.succeeded') {
-            await ShoppingController.updateBillingStatus(json.id, 'success')
+            console.log('charge.succeeded')
+
+            // await ShoppingController.updateBillingStatus(json.id, 'success')
         }
         // if (event.type === 'payment_intent.succeeded') {
         //     const stripeObject: Stripe.PaymentIntent = event.data.object as Stripe.PaymentIntent

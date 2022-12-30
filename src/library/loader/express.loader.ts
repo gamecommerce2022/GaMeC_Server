@@ -36,7 +36,7 @@ export = () => {
         })
     )
     app.options('*', cors())
-
+    
     // api routes
     app.use(env.app.routePrefix, routeConfig.Product.default)
     app.use(env.app.routePrefix, routeConfig.News.default)
