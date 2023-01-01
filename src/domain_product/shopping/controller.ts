@@ -89,21 +89,25 @@ export default class ShoppingController {
         //1) Get the currently selected product
         const products: ((Product.IProductModel & { _id: ObjectId }) | null)[] = []
         const productsId = req.body.products
+        console.log(productsId)
 
         for await (const productId of productsId) {
             const product = await Product.default.findById(productId)
             products.push(product)
         }
+        console.log('products' + products)
 
         const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = []
+        console.log(lineItems)
+
         for await (const product of products) {
             const lineItem = {
                 price_data: {
                     currency: 'VND',
                     product_data: {
                         name: product?.title ?? '',
-                        description: product?.shortDescription,
-                        images: product?.imageList,
+                        description: product?.shortDescription.trim() === '' ? product.title : product?.description,
+                        // images: product?.imageList,
                     },
                     unit_amount: product?.price,
                 },
@@ -112,7 +116,7 @@ export default class ShoppingController {
 
             lineItems.push(lineItem)
         }
-        console.log(lineItems.length)
+        console.log(lineItems)
 
         //2) Create checkout session
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2022-11-15' })
