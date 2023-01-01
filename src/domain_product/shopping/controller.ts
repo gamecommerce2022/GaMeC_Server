@@ -6,10 +6,13 @@ import * as Product from '../info/model'
 import * as Shopping from '../shopping/model'
 import Stripe from 'stripe'
 import { CheckoutStatus } from './type'
+import { ObjectId } from 'mongoose'
 export default class ShoppingController {
-    public static createShopping = async (checkoutSession: Stripe.Checkout.Session, products: Product.IProductModel) => {
+    public static createShopping = async (
+        checkoutSession: Stripe.Checkout.Session,
+        products: ((Product.IProductModel & { _id: ObjectId }) | null)[]
+    ) => {
         const user = await User.default.findOne({ email: checkoutSession.customer_details?.email })
-        console.log(JSON.stringify(checkoutSession))
         const json = JSON.parse(JSON.stringify(checkoutSession))
         const shopping = await new Shopping.default({
             stripeId: json.id,
@@ -18,7 +21,7 @@ export default class ShoppingController {
             paymentStatus: 'pending',
             deliverStatus: 'waiting',
             total: checkoutSession.amount_total,
-            products: [products],
+            products: products,
         })
         await shopping.save()
         // const
@@ -83,7 +86,33 @@ export default class ShoppingController {
 
     public static getCheckoutSession = async (req: Request, res: Response, next: NextFunction) => {
         //1) Get the currently selected product
-        const product = await Product.default.findById(req.params.productId)
+        const products: ((Product.IProductModel & { _id: ObjectId }) | null)[] = []
+        const productsId = req.body.products
+
+        for await (const productId of productsId) {
+            const product = await Product.default.findById(productId)
+            products.push(product)
+        }
+
+        const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = []
+        for await (const product of products) {
+            const lineItem = {
+                price_data: {
+                    currency: 'VND',
+                    product_data: {
+                        name: product?.title ?? '',
+                        description: product?.shortDescription,
+                        images: product?.imageList,
+                    },
+                    unit_amount: product?.price,
+                },
+                quantity: 1,
+            }
+
+            lineItems.push(lineItem)
+        }
+        console.log(lineItems.length)
+
         //2) Create checkout session
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2022-11-15' })
         // const session = await stripe.checkout.sessions.list({ customer_details: { email: '19522281@gm.uit.edu.vn' }, })
@@ -96,24 +125,11 @@ export default class ShoppingController {
             customer_email: req.body.user.email,
             client_reference_id: req.params.productId,
             shipping_address_collection: { allowed_countries: ['VN'] },
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'VND',
-                        product_data: {
-                            name: product?.title ?? '',
-                            description: product?.shortDescription,
-                            images: product?.imageList,
-                        },
-                        unit_amount: product?.price,
-                    },
-                    quantity: 1,
-                },
-            ],
+            line_items: lineItems,
             mode: 'payment',
         })
 
-        await ShoppingController.createShopping(checkoutSession, product!)
+        await ShoppingController.createShopping(checkoutSession, productsId)
 
         console.log('New shopping added successfully')
 
@@ -121,6 +137,16 @@ export default class ShoppingController {
         return res.status(200).json({ status: 'Success', session: checkoutSession })
     }
     public static updateBillingStatus = async (paymentId: string, checkoutStatus: CheckoutStatus) => {
-        await Shopping.default.findOneAndUpdate({ stripeId: paymentId }, { paymentStatus: checkoutStatus })
+        console.log('payment id is' + paymentId)
+
+        const shopping = await Shopping.default.findOne({
+            stripeId: paymentId,
+        })
+        console.log('shopping is ' + shopping)
+
+        if (shopping === null) return
+        shopping.paymentStatus = checkoutStatus
+        shopping.save()
+        // await Shopping.default.findOneAndUpdate({ stripeId: paymentId }, { paymentStatus: checkoutStatus })
     }
 }
