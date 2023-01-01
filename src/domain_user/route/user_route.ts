@@ -14,6 +14,13 @@ router.patch(`${userPrefix}/update-password`, AuthController.protect, AuthContro
 
 router.patch(`${userPrefix}/update-me`, AuthController.protect, User.default.updateMe)
 
+router.patch(
+    `${userPrefix}/update-role`,
+    AuthController.protect,
+    AuthController.restrictTo('admin'),
+    User.default.updateUserRole
+)
+
 router.delete(
     `${userPrefix}/delete/:userId`,
     AuthController.protect,

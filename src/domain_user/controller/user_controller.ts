@@ -107,7 +107,17 @@ export default class UserController {
         // await user?.save()
         return res.status(200).json({ statusCode: 200, message: 'Success', user: updatedUser })
     }
-
+    public static updateUserRole = async (req: Request, res: Response, next: NextFunction) => {
+        const email = req.body.email
+        const newRole = req.body.newRole
+        const user = await User.default.findOne({ email: email })
+        if (user == null) {
+            return res.status(404).json({ statusCode: 404, message: 'User not found' })
+        }
+        user.role = newRole
+        user.save()
+        return res.status(200).json({ statusCode: 200, message: 'Success' })
+    }
     public static delete = async (req: Request, res: Response, next: NextFunction) => {
         const userId = req.params.userId
 

@@ -18,5 +18,5 @@ router.post(`${shoppingPrefix}/remove-from-carts`, AuthController.protect, Shopp
 router.get(`${shoppingPrefix}/get-carts`, AuthController.protect, ShoppingController.getCarts)
 
 
-router.get(`${shoppingPrefix}/checkout-session`, AuthController.protect, ShoppingController.getCheckoutSession)
+router.post(`${shoppingPrefix}/checkout-session`, AuthController.protect, ShoppingController.getCheckoutSession)
 export default router
