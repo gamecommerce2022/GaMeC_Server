@@ -88,13 +88,17 @@ export default class ShoppingController {
         //1) Get the currently selected product
         const products: ((Product.IProductModel & { _id: ObjectId }) | null)[] = []
         const productsId = req.body.products
+        console.log(productsId)
 
         for await (const productId of productsId) {
             const product = await Product.default.findById(productId)
             products.push(product)
         }
+        console.log('products' + products)
 
         const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = []
+        console.log(lineItems)
+
         for await (const product of products) {
             const lineItem = {
                 price_data: {
