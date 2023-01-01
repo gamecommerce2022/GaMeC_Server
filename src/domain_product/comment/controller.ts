@@ -7,18 +7,19 @@ export default class CommentController {
     public static create = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const {
-                productId, authorId, authorName, content
+                idProduct, authorId, authorName, content
             } = req.body
             const date = Date.now()
             const comment = new Comment.default({
                 _id: new mongoose.Types.ObjectId(),
-                productId, authorId, authorName, content, date,
+                idProduct, authorId, authorName, content, date,
             })
             const commentResult = await comment.save()
             return res.status(200).json({
                 code: 200, comment: commentResult
             })
         } catch (error) {
+            console.log(error)
             return res.status(500).json({ code: 500, error })
         }
     }
@@ -52,7 +53,7 @@ export default class CommentController {
     public static getCommentsByProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const productId = req.params.productId
-            const comments = await Comment.default.find({ productId: productId })
+            const comments = await Comment.default.find({ idProduct: productId })
             return res.status(200).json({ code: 200, comments })
         } catch (error) {
             return res.status(500).json({ code: 500, error })
