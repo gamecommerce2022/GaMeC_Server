@@ -13,6 +13,7 @@ export default class ShoppingController {
         products: ((Product.IProductModel & { _id: ObjectId }) | null)[]
     ) => {
         const user = await User.default.findOne({ email: checkoutSession.customer_details?.email })
+        user?.removeAllCart()
         const json = JSON.parse(JSON.stringify(checkoutSession))
         const shopping = await new Shopping.default({
             stripeId: json.id,
