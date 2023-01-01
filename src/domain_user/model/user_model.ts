@@ -20,6 +20,7 @@ export interface IUser {
     removeFromFavorites(productId: string): boolean
     addToCart(productId: string): boolean
     removeFromCart(productId: string): boolean
+    removeAllCart(): boolean
     createPasswordResetToken(): string
 }
 
@@ -124,6 +125,11 @@ UserSchema.methods.addToCart = function (productId: string) {
 UserSchema.methods.removeFromCart = function (productId: string) {
     this.carts = this.carts.filter((cart: string) => cart !== productId)
     console.log(this.carts)
+    return true
+}
+
+UserSchema.methods.removeAllCart = function () {
+    this.carts = []
     return true
 }
 export default mongoose.model<IUser>('User', UserSchema)
