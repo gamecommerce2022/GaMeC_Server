@@ -105,8 +105,8 @@ export default class ShoppingController {
                     currency: 'VND',
                     product_data: {
                         name: product?.title ?? '',
-                        description: product?.shortDescription,
-                        images: product?.imageList,
+                        description: product?.shortDescription.trim() === '' ? product.title : product?.description,
+                        // images: product?.imageList,
                     },
                     unit_amount: product?.price,
                 },
@@ -115,7 +115,7 @@ export default class ShoppingController {
 
             lineItems.push(lineItem)
         }
-        console.log(lineItems.length)
+        console.log(lineItems)
 
         //2) Create checkout session
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2022-11-15' })
