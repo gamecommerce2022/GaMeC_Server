@@ -16,6 +16,7 @@ export interface IProduct {
     imageList: string[]
     description: string
     videoList?: string[]
+    countBuy: number
 }
 
 export interface IProductModel extends IProduct, Document { }
@@ -66,6 +67,9 @@ const IProductSchema: Schema = new Schema(
         },
         videoList: {
             type: [String], require: false
+        },
+        countBuy: {
+            type: Number, require: false, default: 0
         },
     },
     {

@@ -25,7 +25,7 @@ export default class ProductController {
             description,
             videoList,
         } = req.body
-
+        const countBuy = 0
         const product = new Product.default({
             _id: new mongoose.Types.ObjectId(),
             title,
@@ -43,6 +43,7 @@ export default class ProductController {
             imageList,
             description,
             videoList,
+            countBuy,
         })
 
         try {
