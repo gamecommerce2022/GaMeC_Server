@@ -7,6 +7,7 @@ import * as Shopping from '../shopping/model'
 import Stripe from 'stripe'
 import { CheckoutStatus } from './type'
 import { ObjectId } from 'mongoose'
+import axios from 'axios'
 export default class ShoppingController {
     public static getCheckoutById = async (req: Request, res: Response, next: NextFunction) => {
         const id = req.params.id
@@ -263,8 +264,10 @@ export default class ShoppingController {
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2022-11-15' })
         // const session = await stripe.paymentIntents.retrieve(paymentIntent)
         const charge = await stripe.charges.retrieve(req.params.id)
+        const data = await axios.get(charge.receipt_url || '')
+
         if (!charge) return res.status(404).json({ statusCode: 404, message: 'No charge found', charge })
-        return res.status(200).json({ statusCode: 200, message: 'Success', charge })
+        return res.status(200).json({ statusCode: 200, message: 'Success', charge, data: data.data })
     }
     public static getRawCheckoutSessionFromStripe = async (req: Request, res: Response, next: NextFunction) => {
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2022-11-15' })

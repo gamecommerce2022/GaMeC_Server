@@ -1,15 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { User } from '../../domain_user/model'
 import * as bcrypt from 'bcrypt'
-import { Auth, google } from 'googleapis'
 import { AuthenticationUtil } from '../utils/email_verification_util'
-import * as nodemailer from 'nodemailer'
 import * as crypto from 'crypto'
-import * as session from 'express-session'
 import * as jwt from 'jsonwebtoken'
 import { IUser } from '../../domain_user/model/user_model'
 import EmailUtil from '../../utils/email'
-import { Types } from 'mongoose'
 const signToken = (id: string) => {
     return jwt.sign({ id }, process.env.JWT_ACCESS_TOKEN as jwt.Secret, {
         expiresIn: process.env.LOGIN_EXPIRATION_TIME as string,
