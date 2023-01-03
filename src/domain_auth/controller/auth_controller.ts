@@ -5,7 +5,7 @@ import { Auth, google } from 'googleapis'
 import { AuthenticationUtil } from '../utils/email_verification_util'
 import * as nodemailer from 'nodemailer'
 import * as crypto from 'crypto'
-
+import * as session from 'express-session'
 import * as jwt from 'jsonwebtoken'
 import { IUser } from '../../domain_user/model/user_model'
 import EmailUtil from '../../utils/email'
@@ -149,7 +149,9 @@ export default class AuthController {
             return res.status(500).json({ statusCode: 500, message: 'Internal server error', accessToken: null })
         }
     }
-
+    // public static logout = async (req: Request, res: Response, next: NextFunction) => {
+    //  req.
+    // }
     public static verifyEmail = async (req: Request, res: Response) => {
         try {
             const verifyToken = req.params.token
