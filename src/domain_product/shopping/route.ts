@@ -11,12 +11,30 @@ router.post(`${shoppingPrefix}/add-to-favorites`, AuthController.protect, Shoppi
 router.post(`${shoppingPrefix}/remove-from-favorites`, AuthController.protect, ShoppingController.removeFromFavorites)
 
 router.get(`${shoppingPrefix}/get-favorites`, AuthController.protect, ShoppingController.getFavorites)
-
+router.get(`${shoppingPrefix}/get-checkout-sessions`, AuthController.protect, ShoppingController.getCheckoutSessions)
+router.get(`${shoppingPrefix}/get-checkout-session/:id`, AuthController.protect, ShoppingController.getCheckoutById)
 router.post(`${shoppingPrefix}/add-to-carts`, AuthController.protect, ShoppingController.addToCart)
 router.post(`${shoppingPrefix}/remove-from-carts`, AuthController.protect, ShoppingController.removeFromCart)
 
 router.get(`${shoppingPrefix}/get-carts`, AuthController.protect, ShoppingController.getCarts)
+router.get(
+    `${shoppingPrefix}/get-payment-intent/:id`,
+    AuthController.protect,
+    AuthController.restrictTo('admin'),
+    ShoppingController.getPaymentIntent
+)
+router.get(
+    `${shoppingPrefix}/get-charge/:id`,
+    AuthController.protect,
+    AuthController.restrictTo('admin'),
+    ShoppingController.getCharge
+)
+router.get(
+    `${shoppingPrefix}/get-raw-checkout-session/:id`,
+    AuthController.protect,
+    AuthController.restrictTo('admin'),
+    ShoppingController.getRawCheckoutSessionFromStripe
+)
 
-
-router.post(`${shoppingPrefix}/checkout-session`, AuthController.protect, ShoppingController.getCheckoutSession)
+router.post(`${shoppingPrefix}/create-checkout-session`, AuthController.protect, ShoppingController.createCheckoutSession)
 export default router
