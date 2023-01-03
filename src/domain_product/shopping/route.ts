@@ -23,18 +23,11 @@ router.get(
     AuthController.restrictTo('admin'),
     ShoppingController.getPaymentIntent
 )
-router.get(
-    `${shoppingPrefix}/get-charge/:id`,
-    AuthController.protect,
-    AuthController.restrictTo('admin'),
-    ShoppingController.getCharge
-)
+router.get(`${shoppingPrefix}/get-charge/:id`, AuthController.protect, ShoppingController.getCharge)
 router.get(
     `${shoppingPrefix}/get-raw-checkout-session/:id`,
     AuthController.protect,
-    AuthController.restrictTo('admin'),
     ShoppingController.getRawCheckoutSessionFromStripe
 )
-
 router.post(`${shoppingPrefix}/create-checkout-session`, AuthController.protect, ShoppingController.createCheckoutSession)
 export default router
