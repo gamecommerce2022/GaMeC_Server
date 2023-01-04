@@ -29,6 +29,7 @@ router.get(
     AuthController.protect,
     ShoppingController.getRawCheckoutSessionFromStripe
 )
+router.get(`${shoppingPrefix}/get-length`, AuthController.protect,ShoppingController.getAllCheckout)
 router.post(`${shoppingPrefix}/create-checkout-session`, AuthController.protect, ShoppingController.createCheckoutSession)
 router.post(`${shoppingPrefix}/send-invoice`, AuthController.protect, ShoppingController.sendInvoice)
 export default router
