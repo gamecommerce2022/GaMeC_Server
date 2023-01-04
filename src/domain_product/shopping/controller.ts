@@ -8,6 +8,8 @@ import Stripe from 'stripe'
 import { CheckoutStatus } from './type'
 import { ObjectId } from 'mongoose'
 import axios from 'axios'
+import EmailUtil from '../../utils/email'
+
 export default class ShoppingController {
     public static getCheckoutById = async (req: Request, res: Response, next: NextFunction) => {
         const id = req.params.id
@@ -31,7 +33,7 @@ export default class ShoppingController {
         let shoppings = []
 
         let pageNumber = 0
-        if (req.query.page) {
+        if (req.query.pageNumber) {
             pageNumber = parseInt(req.query.pageNumber as string)
         }
         let pageLimit = 30
@@ -237,13 +239,13 @@ export default class ShoppingController {
         const shopping = await Shopping.default.findOne({
             stripeId: paymentId,
         })
-
         console.log('shopping is ' + shopping)
         if (shopping === null) return
         shopping.paymentStatus = checkoutStatus
         shopping.save()
-        const user = await User.default.findById(shopping?.userId)
         if (checkoutStatus === 'success') {
+            const user = await User.default.findById(shopping.userId)
+            await EmailUtil.sendInvoice(user?.id, shopping.id)
             console.log('removing all cart')
             user?.removeAllCart()
             await user!.save({ validateBeforeSave: false })
@@ -267,7 +269,7 @@ export default class ShoppingController {
         const data = await axios.get(charge.receipt_url || '')
 
         if (!charge) return res.status(404).json({ statusCode: 404, message: 'No charge found', charge })
-        return res.status(200).json({ statusCode: 200, message: 'Success', charge, data: data.data })
+        return res.status(200).json({ statusCode: 200, message: 'Success', charge, html: data.data })
     }
     public static getRawCheckoutSessionFromStripe = async (req: Request, res: Response, next: NextFunction) => {
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2022-11-15' })
@@ -278,5 +280,15 @@ export default class ShoppingController {
         if (!checkoutSession)
             return res.status(404).json({ statusCode: 404, message: 'No checkout session found', charge: checkoutSession })
         return res.status(200).json({ statusCode: 200, message: 'Success', checkoutSession })
+    }
+    public static sendInvoice = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = req.body.userId
+            const shoppingId = req.body.shoppingId
+            await EmailUtil.sendInvoice(userId, shoppingId)
+            return res.status(200).json({ statusCode: 200, message: 'Success' })
+        } catch (error) {
+            return res.status(500).json({ statusCode: 500, message: 'Error sending invoice' })
+        }
     }
 }
