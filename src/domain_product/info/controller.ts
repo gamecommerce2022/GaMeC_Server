@@ -201,4 +201,15 @@ export default class ProductController {
             return res.status(500).json({ code: 500, message: error })
         }
     }
+
+    /** ================================================= */
+    public static getRandom5Product = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const products = await Product.default.aggregate([{ $sample: { size: 5 } }])
+            return res.status(200).json({ code: 200, products })
+        } catch (error) {
+            return res.status(500).json({ code: 500, message: error })
+        }
+
+    }
 }

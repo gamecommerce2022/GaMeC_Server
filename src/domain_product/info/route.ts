@@ -18,6 +18,7 @@ router.post(`${productPrefix}/images`, Multer.single('image'), uploadImage)
 
 /** Read Product */
 router.get(`${productPrefix}/get/:productId`, ProductController.read)
+router.get(`${productPrefix}/get5Products`, ProductController.getRandom5Product)
 router.get(`${productPrefix}/all`, ProductController.readAll)
 router.get(`${productPrefix}`, ProductController.readByPage)
 router.get(`${productPrefix}/length`, ProductController.readPageNumber)
