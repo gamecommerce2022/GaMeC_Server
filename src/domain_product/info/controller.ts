@@ -107,28 +107,28 @@ export default class ProductController {
                     case 1: {
                         const producList = await Product.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
                             _id: 1, title: 1, platform: 1, price: 1, type: 1, imageList: 1, discount: 1,
-                        }).sort({ title: 1 }).skip(pageNumber * pageLimit).limit(pageLimit)
+                        }).sort({ title: 1, 'updatedAt': -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, products: producList })
                     }
                     // By Z - A
                     case 2: {
                         const producList = await Product.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
                             _id: 1, title: 1, platform: 1, price: 1, type: 1, imageList: 1, discount: 1,
-                        }).sort({ title: -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
+                        }).sort({ title: -1, 'updatedAt': -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, products: producList })
                     }
                     // By Price Low to High   
                     case 3: {
                         const producList = await Product.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
                             _id: 1, title: 1, platform: 1, price: 1, type: 1, imageList: 1, discount: 1,
-                        }).sort({ price: 1 }).skip(pageNumber * pageLimit).limit(pageLimit)
+                        }).sort({ price: 1, 'updatedAt': -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, products: producList })
                     }
                     // By Price High to Low
                     case 4: {
                         const producList = await Product.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
                             _id: 1, title: 1, platform: 1, price: 1, type: 1, imageList: 1, discount: 1,
-                        }).sort({ price: -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
+                        }).sort({ price: -1, 'updatedAt': -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
                         return res.status(200).json({ code: 200, products: producList })
                     }
                 }
@@ -136,7 +136,7 @@ export default class ProductController {
             }
             const producList = await Product.default.find(q === '' ? {} : { title: { $regex: `${q}` } }, {
                 _id: 1, title: 1, platform: 1, price: 1, type: 1, imageList: 1, discount: 1,
-            }).skip(pageNumber * pageLimit).limit(pageLimit)
+            }).sort({ 'updatedAt': -1 }).skip(pageNumber * pageLimit).limit(pageLimit)
             // const producList = await Product.default.find()
             return res.status(200).json({ code: 200, products: producList })
         } catch (error) {
