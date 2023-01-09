@@ -100,7 +100,18 @@ export default class ShoppingController {
             }
         }
     }
+    public static getAllCheckout = async (req: Request, res: Response, next: NextFunction) => {
+        const email = req.query.email
+        let shoppings = []
 
+        const users = await User.default.find(email === '' ? {} : { email: { $regex: `${email}`, $options: '$i' } })
+        for (const user of users) {
+            const shopping = await Shopping.default.find({ userId: user.id }).sort({ total: 1 })
+            shoppings.push(...shopping)
+        }
+
+        return res.status(200).json({ status: 200, message: 'Success', length: shoppings.length })
+    }
     public static createShopping = async (
         checkoutSession: Stripe.Checkout.Session,
         products: ((Product.IProductModel & { _id: ObjectId }) | null)[]
